@@ -77,7 +77,6 @@ public class Game : MonoBehaviour {
 		currentGameIndex = userInfo.Room.CurrentGameIndex;
 
 		gameTime = SystemManager.Instance.GetInt("game_time", gameTime);
-		gameTime = 10;
 		gameoverTime = SystemManager.Instance.GetFloat("gameover_time", gameoverTime);
 
 		UnityAction exitAction = delegate() {
