@@ -282,11 +282,11 @@ public class LaunchPanel : MonoBehaviour {
         // -------------------------------------------------
         utils.PushBackAction(existAction);
 
-#if UNITY_IOS
-        if (PlayerPrefs.GetInt(Define.PP_Privacy, 0) == 0) {
-            Application.LoadLevelAdditive(Define.SCENE_PRIVACY);
-        }
-#endif
+// #if UNITY_IOS
+//         if (PlayerPrefs.GetInt(Define.PP_Privacy, 0) == 0) {
+//             Application.LoadLevelAdditive(Define.SCENE_PRIVACY);
+//         }
+// #endif
 
         Destroy(contactImg);
     }

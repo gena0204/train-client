@@ -89,7 +89,6 @@ public class Define {
     public const string SCENE_LAUNCH        = "Launch";
     public const string SCENE_MAIN          = "Main";
     public const string SCENE_RANK          = "Rank";
-    // public const string SCENE_HELP          = "Help";
     public const string SCENE_GAME_INTRO    = "GameIntro";
     public const string SCENE_GAME		    = "Game";
     public const string SCENE_MESSAGE       = "Message";
