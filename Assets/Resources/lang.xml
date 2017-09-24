@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languages>
+  <English>
+  </English>
+
+  <Chinese>
+    <string name="crash">遊戲發生錯誤, 請重新進入</string>
+
+    <string name="notification">您已經超過{0}天沒有進行腦力訓練囉!</string>
+    
+    <string name="updating">版本更新中...</string>
+    <string name="error_network">請檢查網路連線</string>
+    <string name="server_timeout">目前伺服器關閉</string>
+    <string name="disconnect">伺服器斷線, 即將離開遊戲</string>
+    <string name="timeout">連線逾時, 請檢查網路連線</string>
+    <string name="restart">遊戲已斷線，請重新啟動</string>
+
+    <string name="is_exit">確定離開?</string>
+    <string name="is_logout">確定登出?</string>
+
+    <string name="privacy_title">隱私權政策</string>
+    <string name="privacy_content"></string>
+
+    <string name="input_account">請輸入帳號</string>
+    <string name="input_password">請輸入密碼</string>
+    <string name="input_password_len">密碼長度須4個以上</string>
+    <string name="input_age">請輸入年齡</string>
+    <string name="register_success">註冊成功</string>
+
+    <string name="enter_hi">您好</string>
+    <string name="train_limit">每日要完成1次[挑戰Go!]，才可解鎖訓練模式。</string>
+
+    <string name="input_roomid">請輸入配對號碼</string>
+    <string name="no_roomid">查無此配對號碼</string>
+    <string name="no_room">目前尚無對手</string>
+    <string name="room_wait">等待隨機玩家加入...</string>
+    <string name="room_user_exit">對手離開</string>
+    <string name="is_game_exit">確定離開對戰?</string>
+
+    <string name="game_fail">失敗!!你已答錯太多題目，請重新挑戰</string>
+
+    <string name="education_1">國小</string>
+    <string name="education_2">國中</string>
+    <string name="education_3">高中/職</string>
+    <string name="education_4">專科</string>
+    <string name="education_5">大學</string>
+    <string name="education_6">研究所以上</string>
+  </Chinese>
+</languages>

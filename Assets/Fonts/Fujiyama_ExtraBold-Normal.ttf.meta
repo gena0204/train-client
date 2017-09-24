@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: c01dfbe835f50b045847761a1e2a4b0b
+timeCreated: 1500717979
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Fujiyama_ExtraBold-Normal
+  fontNames:
+  - Fujiyama_ExtraBold-Normal
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
