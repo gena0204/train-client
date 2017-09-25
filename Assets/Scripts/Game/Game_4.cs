@@ -78,7 +78,7 @@ public class Game_4 : GameBase {
 	
 	// Update is called once per frame
 	void Update () {
-		if (bgs[0].position == endBgPos[0]) {
+		if (bgs[0].position == endBgPos[0] && bgs[1].position == endBgPos[1]) {
 			return;
 		}
 
@@ -91,7 +91,6 @@ public class Game_4 : GameBase {
 				pos.y -= (endBgY - bgs[i].position.y);
 				bgs[i].position = pos;
 				endBgPos[i].y = startBgPos.y - (endBgY - endBgPos[i].y);
-				break;
 			}
 		}
 

@@ -109,6 +109,7 @@ public class Utils : Singleton<Utils> {
         var msg = string.Format(Lang.Instance.getString("notification"), day);
 
         //LocalNotification.CancelNotification(1);
+        LocalNotification.ClearNotifications();
         LocalNotification.SendRepeatingNotification(1, delayMs, delayMs, Application.productName,
             msg, new Color32(0xff, 0x44, 0x44, 255));
     }

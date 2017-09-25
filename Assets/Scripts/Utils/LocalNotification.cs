@@ -78,7 +78,21 @@ public class LocalNotification
         }
         return id;
         #elif UNITY_IOS && !UNITY_EDITOR
-        throw new System.NotImplementedException();
+        // throw new System.NotImplementedException();
+        UnityEngine.iOS.LocalNotification notification = new UnityEngine.iOS.LocalNotification();
+        DateTime now = DateTime.Now;
+        DateTime fireDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).AddSeconds(delayMs);
+        notification.fireDate = fireDate;
+        notification.alertBody = message;
+        notification.alertAction = title;
+        notification.hasAction = false;
+
+        notification.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.ChineseCalendar;
+        notification.repeatInterval = UnityEngine.iOS.CalendarUnit.Day;
+
+        UnityEngine.iOS.NotificationServices.ScheduleLocalNotification(notification);
+
+        return (int)fireDate.Ticks;
         #else
         return 0;
         #endif
