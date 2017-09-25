@@ -85,18 +85,26 @@ public class Game_4 : GameBase {
         var delta = speed * transform.lossyScale.y * Time.deltaTime;
 		for (int i = 0; i < 2; i++) {
 			bgs[i].position = Vector3.MoveTowards(bgs[i].position, endBgPos[i], delta);
+			CheckMoveEnd(i);
+		}
+	}
 
-			if (bgs[i].position.y <= endBgY) {
-				var pos = startBgPos;
-				pos.y -= (endBgY - bgs[i].position.y);
-				bgs[i].position = pos;
-				endBgPos[i].y = startBgPos.y - (endBgY - endBgPos[i].y);
-			}
+	private void Move(int basketIndex) {
+		basket.position = basketPos[basketIndex];
+
+		if (bgs[currentBgIndex].position.y + bgH < objectPos[0].y) {
+			currentBgIndex = (currentBgIndex + 1) % 2;
+		}
+
+		for (int i = 0; i < 2; i++) {
+			bgs[i].position = endBgPos[i];
+			endBgPos[i].y -= offset;
+			CheckMoveEnd(i);
 		}
 
 		if (finishObjQ.Count > 0) {
 			var obj = finishObjQ.Peek();
-			while (obj && obj.transform.position.y <= basket.position.y) {
+			while (obj) {
 				obj.SetActive(false);
 				finishObjQ.Dequeue();
 				obj = finishObjQ.Count > 0 ? finishObjQ.Peek() : null;
@@ -104,22 +112,18 @@ public class Game_4 : GameBase {
 		}
 	}
 
-	private void Move(int basketIndex) {
-		basket.position = basketPos[basketIndex];
-
-		for (int i = 0; i < 2; i++) {
-			bgs[i].position = endBgPos[i];
-			endBgPos[i].y -= offset;
-		}
-
-		if (bgs[currentBgIndex].position.y + bgH < objectPos[0].y) {
-			currentBgIndex = (currentBgIndex + 1) % 2;
+	private void CheckMoveEnd(int index) {
+		if (bgs[index].position.y <= endBgY) {
+			var pos = startBgPos;
+			pos.y -= (endBgY - bgs[index].position.y);
+			bgs[index].position = pos;
+			endBgPos[index].y = startBgPos.y - (endBgY - endBgPos[index].y);
 		}
 	}
 
 	private GameObject GenerateObject(int index) {
 		GameObject go;
-		if (objectQ[index].Count == 0) {
+		if (objectQ[index].Count < 2) {
 			go = Instantiate<GameObject>(objectPrefabs[index]);
 			go.name = "" + index;
 			go.transform.localScale = Vector3.one;
@@ -205,11 +209,15 @@ public class Game_4 : GameBase {
 			Move(index);
 			for (int i = 0; i < 2; i++) {
 				if (q.objects[i]) {
-					var obj = q.objects[i];
-					finishObjQ.Enqueue(obj);
-					Utils.Instance.PlayAnimation(obj.GetComponent<Animation>(), delegate() {
-						RecycleObject(obj);
-					}, 0, "fadeout");
+					if (i == q.answerIndex) { // 金蛋
+						var obj = q.objects[i];
+						finishObjQ.Enqueue(obj);
+						Utils.Instance.PlayAnimation(obj.GetComponent<Animation>(), delegate() {
+							RecycleObject(obj);
+						}, 0, "fadeout");
+					} else {
+						RecycleObject(q.objects[i]);
+					}
 				}
 			}
 

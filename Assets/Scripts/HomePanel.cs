@@ -386,27 +386,6 @@ public class HomePanel : MonoBehaviour {
         var accountText = homePanel.transform.FindChild("Text_Account").GetComponent<Text>();
 
         UnityAction initCB = delegate() {
-            //------------------------------------------
-            // Break off background
-            //------------------------------------------
-            // int levelFinishCount = 0;
-            // for (int i=0; i<3; i++) {
-            //     int charCount = 0;
-            //     var chars = systemManager.GetChars(i);
-            //     foreach (var character in chars) {
-            //         if (userInfo.GetStar(character) > 0) {
-            //             charCount++;
-            //         }
-            //     }
-            //     if (charCount == chars.Count()) {
-            //         levelFinishCount++;
-            //     } else {
-            //         break;
-            //     }
-            // }
-            // transform.FindChild("Panel").GetComponent<Image>().sprite =
-                // Resources.Load<Sprite>(levelFinishCount == 3 ? "Sprites/index_day_bg" :　"Sprites/index_bg");
-
             accountText.text = "ID: " + userInfo.Account;
         };
 
