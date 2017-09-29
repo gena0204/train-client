@@ -175,7 +175,6 @@ public class Game_12 : GameBase {
 
 		startArrows[arrowIndex].SetActive(false);
 		startArrows[arrowIndex].transform.position = buttons[startIndex].transform.position;
-		// startArrow.transform.localEulerAngles = new Vector3(0, 0, -90 * (startIndex/3+1));
 
 		int[] posIndexs = new int[] {
 			0, 1, 2,
@@ -407,12 +406,15 @@ public class Game_12 : GameBase {
 		json.AddField("question",   	question); // 起點
 		json.AddField("right",   		end); // 終點
 		json.AddField("reaction",   	reaction); // 反應
-		json.AddField("remember_ms",   	rememberTime); // 記憶時間
+		json.AddField("remember_ms",   	(int)rememberTime); // 記憶時間
 		return json;
 	}
 
 	public override void GameOver() {
-		if (startButton.activeSelf == false && reaction == "") {
+		if (startButton.activeSelf == false) {
+			rememberTime = 0;
+		}
+		if (reaction == "") {
 			Game.self.Next(true, false);
 		}
 	}

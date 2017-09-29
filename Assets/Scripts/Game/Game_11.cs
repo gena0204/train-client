@@ -13,6 +13,8 @@ public class Game_11 : GameBase {
 	private int[] colorSizes;
 	private int currentCardSize = 9;
 	private int currentColorSize = 2;
+	private int currentMaxSize = 0;
+	private int currentMinSize = 0;
 	private int answerColorIndex = 0;
 	private int[] questionColorIndexs = new int[16];
 	
@@ -66,6 +68,11 @@ public class Game_11 : GameBase {
 		}
 	}
 
+	// 最簡單的題目中，最多的顏色格數：
+	// Level 1: 方塊數量為3x3塊，顏色數量為2種。（6格）
+	// Level 2: 方塊數量為3x3塊，顏色數量為3種。（5格）
+	// Level 3: 方塊數量為4x4塊，顏色數量為2種。（10格）
+	// Level 4: 方塊數量為4x4塊，顏色數量為3種。（7格）
 	private void SetLevel(int l) {
 		level = l;
 
@@ -77,23 +84,27 @@ public class Game_11 : GameBase {
 			case 0:
 				currentCardSize = 9;
 				currentColorSize = 2;
+				currentMaxSize = 6;
 				transform.FindChild("Panel").GetComponent<GridLayoutGroup>().constraintCount = 3;
 				break;
 
 			case 1:
 				currentCardSize = 9;
 				currentColorSize = 3;
+				currentMaxSize = 5;
 				break;
 
 			case 2:
 				currentCardSize = 16;
 				currentColorSize = 2;
+				currentMaxSize = 10;
 				transform.FindChild("Panel").GetComponent<GridLayoutGroup>().constraintCount = 4;
 				break;
 
 			case 3:
 				currentCardSize = 16;
 				currentColorSize = 3;
+				currentMaxSize = 7;
 				break;
 
 			default:
@@ -107,6 +118,13 @@ public class Game_11 : GameBase {
 		colorSizes = new int[currentColorSize];
 		cardIndexs = Enumerable.Range(0, currentCardSize).ToArray();
 		levelValue = (int)System.Math.Sqrt(currentCardSize) * 10 + currentColorSize;
+
+		if (currentColorSize == 2) {
+			currentMinSize = currentCardSize - currentMaxSize;
+		} else {
+			currentMinSize = currentCardSize - currentMaxSize;
+			currentMinSize = currentMinSize > currentMaxSize ? (currentMinSize-(currentMaxSize-1)) : 1;
+		}
 	}
 
 	protected override void CreateQuestion() {
@@ -121,18 +139,18 @@ public class Game_11 : GameBase {
 
 		if (currentColorSize == 2) {
 			while (true) {
-				colorSizes[0] = rand.Next(currentCardSize - 1) + 1;
+				colorSizes[0] = rand.Next(currentMaxSize - currentMinSize) + 1 + currentMinSize;
 				if (colorSizes[0] == (currentCardSize/2)) continue;
 				colorSizes[1] = currentCardSize - colorSizes[0];
 				break;
 			}
 		} else {
 			while (true) {
-				colorSizes[0] = rand.Next(currentCardSize - 3) + 1;
-				colorSizes[1] = rand.Next(currentCardSize - colorSizes[0] - 1) + 1;
-				if (colorSizes[0] == colorSizes[1]) continue;
+				colorSizes[0] = rand.Next(currentMaxSize - currentMinSize) + 1 + currentMinSize;
+				colorSizes[1] = rand.Next(currentCardSize - colorSizes[0] - currentMinSize) + 1;
+				if (colorSizes[1] > currentMaxSize || colorSizes[0] == colorSizes[1]) continue;
 				colorSizes[2] = currentCardSize - colorSizes[0] - colorSizes[1];
-				if (colorSizes[2] == colorSizes[0] || colorSizes[2] == colorSizes[1]) continue;
+				if (colorSizes[2] > currentMaxSize || colorSizes[2] == colorSizes[0] || colorSizes[2] == colorSizes[1]) continue;
 				break;
 			}
 		}

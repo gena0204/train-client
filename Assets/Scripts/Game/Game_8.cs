@@ -180,10 +180,17 @@ public class Game_8 : GameBase {
 		json.AddField("type",   		type); // 類型
 		json.AddField("question",   	question); // 位置
 		json.AddField("reaction",   	reaction); // 反應
-		json.AddField("remember_ms",   	rememberTime); // 記憶時間
+		json.AddField("remember_ms",   	(int)rememberTime); // 記憶時間
 		json.AddField("count_1",   		counts[0]); // 答題狀況一
 		json.AddField("count_2",   		counts[1]); // 答題狀況二
 		json.AddField("count_3",   		counts[2]); // 答題狀況三
 		return json;
+	}
+
+	public override void GameOver() {
+		if (Game.self.GetReactionCount() == 0) {
+			rememberTime = 0;
+			Game.self.Next(true, false);
+		}
 	}
 }

@@ -82,11 +82,10 @@ public class HomePanel : MonoBehaviour {
         trainBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
-            // test
-            // if (PlayerPrefs.GetInt(Define.PP_ChallengeFinish) == 0) {
-            //     MessagePanel.ShowMessage(lang.getString("train_limit"));
-            //     return;
-            // }
+            if (PlayerPrefs.GetInt(Define.PP_ChallengeFinish) == 0) {
+                MessagePanel.ShowMessage(lang.getString("train_limit"));
+                return;
+            }
 
             SetPanel(trainPanel, trainBtn);
         });
@@ -145,7 +144,7 @@ public class HomePanel : MonoBehaviour {
         currentPanel = homePanel;
         currentBtn = homeBtn;
 
-        if (panelIndex == 1) {
+        if (panelIndex == 1 && PlayerPrefs.GetInt(Define.PP_ChallengeFinish) > 0) {
             panelIndex = 0;
             SetPanel(trainPanel, trainBtn, false);
         } else {
@@ -181,19 +180,8 @@ public class HomePanel : MonoBehaviour {
             exitImg.SetActive(false);
         });
         exitImg.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backExitAction);
-
-        exitImg.transform.FindChild("Button_Logout").GetComponent<Button>().onClick.AddListener(delegate() {
-            audioManager.PlaySound((int)Define.Sound.Click);
-            if (userInfo.Token != "") {
-                MessagePanel.ShowOkCancel(lang.getString("is_logout"), delegate() {
-                    logoutHandler();
-                });
-            }
-            else {
-                logoutHandler();
-            }
-        });
-        exitImg.transform.Find("Button_Exit").GetComponent<Button>().onClick.AddListener(delegate() {
+        exitImg.transform.FindChild("Button_Cancel").GetComponent<Button>().onClick.AddListener(backExitAction);
+        exitImg.transform.FindChild("Button_Ok").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             Application.Quit();
         });

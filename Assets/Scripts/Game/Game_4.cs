@@ -50,6 +50,8 @@ public class Game_4 : GameBase {
 
 		basketPos[0] = objectPos[0] = transform.FindChild("Image_Left").position;
 		basketPos[1] = objectPos[1] = transform.FindChild("Image_Right").position;
+		basketPos[0].y = basket.position.y; basketPos[1].y = basket.position.y;
+		objectPos[0].y = basket.position.y; objectPos[1].y = basket.position.y;
 
 		startBgPos = bgs[1].position;
 		endBgPos[0] = bgs[0].position;
@@ -138,7 +140,7 @@ public class Game_4 : GameBase {
 
 	private void RecycleObject(GameObject go) {
 		if (go) {
-			// go.SetActive(false);
+			go.SetActive(false);
 			objectQ[go.name == "0" ? 0 : 1].Enqueue(go);
 		}
 	}
@@ -209,15 +211,11 @@ public class Game_4 : GameBase {
 			Move(index);
 			for (int i = 0; i < 2; i++) {
 				if (q.objects[i]) {
-					if (i == q.answerIndex) { // 金蛋
-						var obj = q.objects[i];
-						finishObjQ.Enqueue(obj);
-						Utils.Instance.PlayAnimation(obj.GetComponent<Animation>(), delegate() {
-							RecycleObject(obj);
-						}, 0, "fadeout");
-					} else {
-						RecycleObject(q.objects[i]);
-					}
+					var obj = q.objects[i];
+					finishObjQ.Enqueue(obj);
+					Utils.Instance.PlayAnimation(obj.GetComponent<Animation>(), delegate() {
+						RecycleObject(obj);
+					}, 0, "fadeout");
 				}
 			}
 

@@ -19,11 +19,17 @@
     <string name="is_logout">確定登出?</string>
 
     <string name="privacy_title">隱私權政策</string>
-    <string name="privacy_content"></string>
+    <string name="privacy_content">中央研究院語言學研究所對於每位使用者的隱私權絕對尊重並保護重視。遵循「個人資料保護法」之規定，在未經您的同意之下，我們絕不會將您的個人資料提供予任何與本應用服務無關之第三方。請您妥善保密自己的帳號、密碼及個人資料，不要將任何個人資料，尤其是帳號密碼提供給其他人。
+
+中央研究院語言學研究所有隨時更動應用程式隱私權政策的權限，任何隱私權政策的更動都將同步公布於本應用程式上。
+
+中央研究院語言學研究所 謹上
+</string>
 
     <string name="input_account">請輸入帳號</string>
     <string name="input_password">請輸入密碼</string>
     <string name="input_password_len">密碼長度須4個以上</string>
+    <string name="need_privacy">請同意隱私權保護政策</string>
     <string name="input_age">請輸入年齡</string>
     <string name="register_success">註冊成功</string>
 

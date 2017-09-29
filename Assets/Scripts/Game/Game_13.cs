@@ -78,7 +78,12 @@ public class Game_13 : Game_12 {
 	}
 
 	protected override void CreateQuestion() {
-		currentMatchSize = rand.Next(currentArrowSize) + 1;
+		// 題目箭頭數量為3時，抵達終點可能用到的箭頭只能是兩個或三個
+		if (currentArrowSize == 3) {
+			currentMatchSize = rand.Next(currentArrowSize-1) + 2;
+		} else {
+			currentMatchSize = rand.Next(currentArrowSize) + 1;
+		}
 		base.CreateQuestion();
 
 		type = currentArrowSize == currentMatchSize ? "S" : "D"; // 經過箭頭數與難度相同- S,  差一種- D

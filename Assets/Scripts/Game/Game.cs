@@ -81,7 +81,9 @@ public class Game : MonoBehaviour {
 
 		UnityAction exitAction = delegate() {
 			audioManager.PlaySound((int)Define.Sound.Click);
-			HomePanel.panelIndex = 1; // 回訓練頁面
+			if (!userInfo.Room.IsChallenge) {
+				HomePanel.panelIndex = 1; // 回訓練頁面
+			}
 			StopCountDown();
             Exit();
 		};

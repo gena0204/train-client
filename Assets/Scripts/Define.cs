@@ -1,4 +1,4 @@
-﻿#define _DEBUG
+﻿// #define _DEBUG
 
 using UnityEngine;
 using System.Collections;
@@ -7,16 +7,18 @@ public class Define {
 
 #if _DEBUG
     public const string HOST                = "jack0204.ddns.net";
-    public const string RESTFUL_URL         = "http://" + HOST + ":8090/";
-    public const string RESTFUL_URL_IPV6    = "http://" + HOST + ":8090/";
+    public const string HOST_IPV6           = "[2001:b011:4800:984:c568:8a6b:395e:efcb]";
+    
 #else
     public const string HOST                = "140.109.150.188";
-    public const string RESTFUL_URL         = "http://" + HOST + ":8090/";
-    public const string RESTFUL_URL_IPV6    = "http://" + HOST + ":8090/";
+    public const string HOST_IPV6           = "[2001:b011:4800:984:c568:8a6b:395e:efcb]";
 #endif
 
+    public const string RESTFUL_URL         = "http://" + HOST_IPV6 + ":8090/";  
+    public const string RESTFUL_URL_IPV6    = "http://" + HOST_IPV6 + ":8090/";
+
 	public const string WEBSOCKET_URL       = "ws://" + HOST + ":8009/train";
-    public const string WEBSOCKET_URL_IPV6  = "ws://" + HOST + ":8009/train";
+    public const string WEBSOCKET_URL_IPV6  = "ws://" + HOST_IPV6 + ":8009/train";
     public const string FILE_URL            = "http://" + HOST + ":8090/files";
 
     public static readonly string VERSION_CLIENT    = Application.version; // (強制更新版本).(新增/調整功能).(Bug修正)
@@ -25,18 +27,19 @@ public class Define {
     public const int    DOWNLOAD_TIMEOUT            = 30;
 
     //--------------------------------------------------------------------------------------------
-    public const string API_Crash                  = RESTFUL_URL + "crash";
+    public const string API_Crash                   = RESTFUL_URL + "crash";
 
     public const string API_Update                  = RESTFUL_URL + "update";
 
     public const string API_Login                   = RESTFUL_URL + "login";
     public const string API_Logout                  = RESTFUL_URL + "logout";
+    public const string API_AccountCheck            = RESTFUL_URL + "account/check";
     public const string API_Register                = RESTFUL_URL + "register";
 
     public const string API_Enter                   = RESTFUL_URL + "enter";
 
     public const string API_News                    = RESTFUL_URL + "news";
-    public const string API_Slogan                    = RESTFUL_URL + "slogan";
+    public const string API_Slogan                   = RESTFUL_URL + "slogan";
     public const string API_Rank                    = RESTFUL_URL + "rank";
 
     public const string API_Statistic_Create        = RESTFUL_URL + "statistic/create";
