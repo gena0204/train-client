@@ -14,7 +14,7 @@ public class Define {
     public const string HOST_IPV6           = "[2001:b011:4800:984:c568:8a6b:395e:efcb]";
 #endif
 
-    public const string RESTFUL_URL         = "http://" + HOST_IPV6 + ":8090/";  
+    public const string RESTFUL_URL         = "http://" + HOST + ":8090/";  
     public const string RESTFUL_URL_IPV6    = "http://" + HOST_IPV6 + ":8090/";
 
 	public const string WEBSOCKET_URL       = "ws://" + HOST + ":8009/train";
