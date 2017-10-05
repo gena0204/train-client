@@ -9,7 +9,7 @@
     <string name="notification">您已經超過{0}天沒有進行腦力訓練囉!</string>
     
     <string name="updating">版本更新中...</string>
-    <string name="error_network">請檢查網路連線</string>
+    <string name="no_network">請檢查網路連線</string>
     <string name="server_timeout">目前伺服器關閉</string>
     <string name="disconnect">伺服器斷線, 即將離開遊戲</string>
     <string name="timeout">連線逾時, 請檢查網路連線</string>

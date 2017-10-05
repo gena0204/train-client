@@ -6,6 +6,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq; // 使用擴充功能(ex.陣列比較), 盡量少用
+using System.Net;
+using System.Net.Sockets;
 
 public class HomePanel : MonoBehaviour {
 
@@ -445,16 +447,22 @@ public class HomePanel : MonoBehaviour {
         //------------------------------------------
         // Check Network
         //------------------------------------------
-        switch (Network.TestConnection()) {
-            case ConnectionTesterStatus.Error:
-                LoadingPanel.Close();
-                MessagePanel.ShowMessage(lang.getString("error_network"), delegate() {
-                    Application.Quit();
-                });
-                return;
+        if (Application.internetReachability == NetworkReachability.NotReachable) {
+            LoadingPanel.Close();
+            MessagePanel.ShowMessage(lang.getString("no_network"), delegate() {
+                Application.Quit();
+            });
+            return;
+        } /*else if (Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork) { // WiFi
+        } else if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork) { // 行動網路
+        }*/
 
-            default:
-                break;
+        // 判斷網絡環境 IPV4/IPV6
+        IPAddress[] address = Dns.GetHostAddresses("www.google.com");
+        if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
+            Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
+            Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
+            Define.FILE_URL         = Define.FILE_URL_IPV6;
         }
 
         //------------------------------------------

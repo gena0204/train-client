@@ -6,43 +6,49 @@ using System.Collections;
 public class Define {
 
 #if _DEBUG
-    public const string HOST                = "jack0204.ddns.net";
-    public const string HOST_IPV6           = "[2001:b011:4800:984:c568:8a6b:395e:efcb]";
-    
+    private const string HOST                = "jack24.ddns.net";
+    private const string HOST_IPV6           = "jack24.ddns.net";
 #else
-    public const string HOST                = "140.109.150.188";
-    public const string HOST_IPV6           = "[2001:b011:4800:984:c568:8a6b:395e:efcb]";
+    private const string HOST                = "140.109.150.188";
+    private const string HOST_IPV6           = "[2001:b011:4800:b39:7c09:d2ac:2436:87cc]";
 #endif
 
-    public const string RESTFUL_URL         = "http://" + HOST + ":8090/";  
+    public const string RESTFUL_URL_IPV4    = "http://" + HOST + ":8090/";  
     public const string RESTFUL_URL_IPV6    = "http://" + HOST_IPV6 + ":8090/";
 
-	public const string WEBSOCKET_URL       = "ws://" + HOST + ":8009/train";
+	public const string WEBSOCKET_URL_IPV4  = "ws://" + HOST + ":8009/train";
     public const string WEBSOCKET_URL_IPV6  = "ws://" + HOST_IPV6 + ":8009/train";
-    public const string FILE_URL            = "http://" + HOST + ":8090/files";
 
+    public const string FILE_URL_IPV4       = "http://" + HOST + ":8090/files";
+    public const string FILE_URL_IPV6       = "http://" + HOST_IPV6 + ":8090/files";
+
+    public static string RESTFUL_URL        = RESTFUL_URL_IPV4;
+    public static string WEBSOCKET_URL      = WEBSOCKET_URL_IPV4;
+    public static string FILE_URL           = FILE_URL_IPV4;
+
+    //--------------------------------------------------------------------------------------------
     public static readonly string VERSION_CLIENT    = Application.version; // (強制更新版本).(新增/調整功能).(Bug修正)
 
     public static readonly string DOWNLOAD_PATH     = Application.persistentDataPath + "/Downloads/";
     public const int    DOWNLOAD_TIMEOUT            = 30;
 
     //--------------------------------------------------------------------------------------------
-    public const string API_Crash                   = RESTFUL_URL + "crash";
+    public const string API_Crash                   = "crash";
 
-    public const string API_Update                  = RESTFUL_URL + "update";
+    public const string API_Update                  = "update";
 
-    public const string API_Login                   = RESTFUL_URL + "login";
-    public const string API_Logout                  = RESTFUL_URL + "logout";
-    public const string API_AccountCheck            = RESTFUL_URL + "account/check";
-    public const string API_Register                = RESTFUL_URL + "register";
+    public const string API_Login                   = "login";
+    public const string API_Logout                  = "logout";
+    public const string API_AccountCheck            = "account/check";
+    public const string API_Register                = "register";
 
-    public const string API_Enter                   = RESTFUL_URL + "enter";
+    public const string API_Enter                   = "enter";
 
-    public const string API_News                    = RESTFUL_URL + "news";
-    public const string API_Slogan                   = RESTFUL_URL + "slogan";
-    public const string API_Rank                    = RESTFUL_URL + "rank";
+    public const string API_News                    = "news";
+    public const string API_Slogan                  = "slogan";
+    public const string API_Rank                    = "rank";
 
-    public const string API_Statistic_Create        = RESTFUL_URL + "statistic/create";
+    public const string API_Statistic_Create        = "statistic/create";
 
     //--------------------------------------------------------------------------------------------
     public const string Channel_S2C_Message         = "S2C_Message";
@@ -83,10 +89,8 @@ public class Define {
     public const string Channel_C2S_FinishGame      = "C2S_FinishGame";
     public const string Channel_S2C_FinishGame      = "S2C_FinishGame";
 
-    public const string Channel_C2S_IAPSuccess      = "C2S_IAPSuccess";
-
 	public const string Channel_C2S_Answer          = "C2S_Answer";
-	public const string Channel_S2C_Score           = "S2C_Score";    
+	public const string Channel_S2C_Score           = "S2C_Score";   
 
     //-------------------------------------------------------------------------------------------
     public const string SCENE_LAUNCH        = "Launch";
@@ -202,6 +206,7 @@ public class Define {
     public const string PP_DataVersion      = "pp_data_version";
     public const string PP_GameData         = "pp_game_data";
     public const string PP_SloganData       = "pp_slogan_data";
+    
     public const string PP_ChallengeIndexs  = "pp_challenge_indexs";
     public const string PP_ChallengeDate    = "pp_challenge_date";
     public const string PP_ChallengeFinish  = "pp_challenge_Finish";

@@ -20,7 +20,7 @@ public class Restful : Singleton<Restful> {
         
         var postData = System.Text.Encoding.UTF8.GetBytes(json.Print());
 
-        StartCoroutine(WaitForRequest(new WWW(url, postData, headers), handler));
+        StartCoroutine(WaitForRequest(new WWW(Define.RESTFUL_URL + url, postData, headers), handler));
     }
 
     IEnumerator WaitForRequest(WWW www, RestfulHandler handler) {
