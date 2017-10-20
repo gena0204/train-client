@@ -74,6 +74,8 @@ public class HomePanel : MonoBehaviour {
         var rankCaptionTexts = new Text[14];
         var rankTexts = new Text[14];
 
+        var challengeDate = PlayerPrefs.GetString(Define.PP_ChallengeDate);
+
         var homeBtn = transform.FindChild("Panel/Panel_Bottom/Button_Home").GetComponent<Button>();
         homeBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
@@ -84,10 +86,16 @@ public class HomePanel : MonoBehaviour {
         trainBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
-            if (PlayerPrefs.GetInt(Define.PP_ChallengeFinish) == 0) {
+            var today = DateTime.Now.ToString("dd/MM/yyyy");
+            if (challengeDate != today) {
                 MessagePanel.ShowMessage(lang.getString("train_limit"));
                 return;
             }
+
+            // if (PlayerPrefs.GetInt(Define.PP_ChallengeFinish) == 0) {
+            //     MessagePanel.ShowMessage(lang.getString("train_limit"));
+            //     return;
+            // }
 
             SetPanel(trainPanel, trainBtn);
         });
@@ -146,7 +154,7 @@ public class HomePanel : MonoBehaviour {
         currentPanel = homePanel;
         currentBtn = homeBtn;
 
-        if (panelIndex == 1 && PlayerPrefs.GetInt(Define.PP_ChallengeFinish) > 0) {
+        if (panelIndex == 1 /*&& PlayerPrefs.GetInt(Define.PP_ChallengeFinish) > 0*/) {
             panelIndex = 0;
             SetPanel(trainPanel, trainBtn, false);
         } else {
@@ -413,11 +421,11 @@ public class HomePanel : MonoBehaviour {
                 //------------------------------------------
                 // Challenge Finish Count
                 //------------------------------------------
-                var today = DateTime.Now.ToString("dd/MM/yyyy");
-                var date = PlayerPrefs.GetString(Define.PP_ChallengeDate);
-                if (date != today) {
-                    PlayerPrefs.SetInt(Define.PP_ChallengeFinish, 0);
-                }
+                // var today = DateTime.Now.ToString("dd/MM/yyyy");
+                // var date = PlayerPrefs.GetString(Define.PP_ChallengeDate);
+                // if (date != today) {
+                //     PlayerPrefs.SetInt(Define.PP_ChallengeFinish, 0);
+                // }
 
                 Utils.SendRepeatingNotification();
                 MessagePanel.ShowMessage(userInfo.Account + " " + lang.getString("enter_hi"));
@@ -482,10 +490,6 @@ public class HomePanel : MonoBehaviour {
                 LoadingPanel.Close();
                 MessagePanel.ShowMessage(json["msg"].str, delegate() {
                     Application.Quit();
-                    // userInfo.Clear();
-                    // SceneManager.LoadScene(Define.SCENE_LAUNCH, LoadSceneMode.Additive);
-                    // LocalNotification.CancelNotification(1);
-                    // gameObject.SetActive(false);
                 });
                 return;
             }
