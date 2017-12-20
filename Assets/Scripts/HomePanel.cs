@@ -8,8 +8,17 @@ using System.Collections.Generic;
 using System.Linq; // 使用擴充功能(ex.陣列比較), 盡量少用
 using System.Net;
 using System.Net.Sockets;
+using Language;
 
 public class HomePanel : MonoBehaviour {
+
+    [SerializeField]
+    private Fading fading;
+
+    [SerializeField]
+    private Font[] fonts;
+    [SerializeField]
+    private int[] fontSizes;
 
     class RankInfo : IComparable<RankInfo> {
         public string Caption { get ; set ; }
@@ -29,18 +38,23 @@ public class HomePanel : MonoBehaviour {
     public static UnityAction enterCB;
     private static bool isInit = false;
 
-    private Fading fading;
-
-
     private Button currentBtn = null;
     private GameObject currentPanel = null;
     private Transform barImage;
     private Vector3 barTargetPos;
 
+    void Awake () {
+        if (!Lang.Instance.isLoad()) {
+            string language = PlayerPrefs.GetString(Define.PP_Language, "Chinese");
+            Lang.Instance.setLanguage(Resources.Load<TextAsset>("lang").text, language);
+            LanguageService.Instance.Language = new LanguageInfo(language);
+            Restful.Instance.AcceptLanguage = language == "Chinese" ? "zh-TW" : "en";
+        }
+	}
 
     // Use this for initialization
     void Start() {
-        //PlayerPrefs.DeleteAll();
+        // PlayerPrefs.DeleteAll();
 
         Loom.Instance.enabled = true; // 無意義, 消除unity警告用
         UserInfo userInfo = UserInfo.Instance;
@@ -50,58 +64,50 @@ public class HomePanel : MonoBehaviour {
         AudioManager audioManager = AudioManager.Instance;
 
         AudioManager.Instance.PlayMusic((int)Define.Music.Main);
-
-        if (!lang.isLoad()) {
-            lang.setLanguage(Resources.Load<TextAsset>("lang").text, "Chinese");
-        }
-
-        fading = transform.FindChild("Panel").GetComponent<Fading>();
         
 
         //=============================================================
         // Panel
         //=============================================================
-        GameObject homePanel = transform.FindChild("Panel/Panel_Home").gameObject;
-        GameObject trainPanel = transform.FindChild("Panel/Panel_Train").gameObject;
-        GameObject rankPanel = transform.FindChild("Panel/Panel_Rank").gameObject;
-        GameObject menuPanel = transform.FindChild("Panel/Panel_Menu").gameObject;
-        GameObject newsPanel = transform.FindChild("Panel/Panel_News").gameObject;
+        GameObject homePanel = transform.Find("Panel/Panel_Home").gameObject;
+        GameObject trainPanel = transform.Find("Panel/Panel_Train").gameObject;
+        GameObject rankPanel = transform.Find("Panel/Panel_Rank").gameObject;
+        GameObject menuPanel = transform.Find("Panel/Panel_Menu").gameObject;
+        GameObject newsPanel = transform.Find("Panel/Panel_News").gameObject;
 
-        var rankScrollRect = rankPanel.transform.FindChild("Scroll View").GetComponent<ScrollRect>();
-        var menuScrollRect = menuPanel.transform.FindChild("Scroll View").GetComponent<ScrollRect>();
-        barImage = transform.FindChild("Panel/Panel_Bottom/Image_bar");
+        var rankScrollRect = rankPanel.transform.Find("Scroll View").GetComponent<ScrollRect>();
+        var menuScrollRect = menuPanel.transform.Find("Scroll View").GetComponent<ScrollRect>();
+        barImage = transform.Find("Panel/Panel_Bottom/Image_bar");
 
-        var rankCaptionTexts = new Text[14];
-        var rankTexts = new Text[14];
+        var trainCaptionTexts = new Text[Define.gameInfo.Count()];
+        var rankCaptionTexts = new Text[Define.gameInfo.Count()];
+        var rankTexts = new Text[Define.gameInfo.Count()];
 
         var challengeDate = PlayerPrefs.GetString(Define.PP_ChallengeDate);
 
-        var homeBtn = transform.FindChild("Panel/Panel_Bottom/Button_Home").GetComponent<Button>();
+        var homeBtn = transform.Find("Panel/Panel_Bottom/Button_Home").GetComponent<Button>();
         homeBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             SetPanel(homePanel, homeBtn);
         });
 
-        var trainBtn = transform.FindChild("Panel/Panel_Bottom/Button_Train").GetComponent<Button>();
+        var trainBtn = transform.Find("Panel/Panel_Bottom/Button_Train").GetComponent<Button>();
         trainBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
-            var today = DateTime.Now.ToString("dd/MM/yyyy");
-            if (challengeDate != today) {
+#if !UNITY_EDITOR
+            if (systemManager.GetInt("challeng_limit_enable") == 1 && challengeDate != DateTime.Now.ToString("dd/MM/yyyy")) {
                 MessagePanel.ShowMessage(lang.getString("train_limit"));
                 return;
             }
-
-            // if (PlayerPrefs.GetInt(Define.PP_ChallengeFinish) == 0) {
-            //     MessagePanel.ShowMessage(lang.getString("train_limit"));
-            //     return;
-            // }
+#endif
 
             SetPanel(trainPanel, trainBtn);
         });
 
         var isRankLoad = false;
-        var rankBtn = transform.FindChild("Panel/Panel_Bottom/Button_Rank").GetComponent<Button>();
+        var langRankIndexs = new int[] {};
+        var rankBtn = transform.Find("Panel/Panel_Bottom/Button_Rank").GetComponent<Button>();
         rankBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             SetPanel(rankPanel, rankBtn);
@@ -121,30 +127,42 @@ public class HomePanel : MonoBehaviour {
                     return;
                 }
 
-                var ranks = new RankInfo[14];
+                var ranks = new List<RankInfo>();
 
-                int i = 0;
-                foreach (var rank in json["ranks"].list) {
-                    int value = (int)rank.n;
-                    ranks[i] = new RankInfo(Define.gameInfo[i][0], value == 0 ? int.MaxValue : value);
-                    i++;
+                if (!json.HasField("ranks") || !json["ranks"].IsArray) {
+                    for (int i = 0; i < ranks.Count(); i++) {
+                        if (langRankIndexs.Contains(i)) {
+                            continue;
+                        }
+                        ranks.Add(new RankInfo(lang.getString("game_name_" + (i + 1)), int.MaxValue));
+                    }
+                } else {
+                    int i = 0;
+                    foreach (var rank in json["ranks"].list) {
+                        if (langRankIndexs.Contains(i)) {
+                            i++; continue;
+                        }
+                        int value = (int)rank.n;
+                        ranks.Add(new RankInfo(lang.getString("game_name_" + (i + 1)), value == 0 ? int.MaxValue : value));
+                        i++;
+                    }
                 }
-
+                
                 // 使用Linq的穩定排序(stable)
                 var result = ranks.OrderBy(item => item);
 
-                i = 0;
+                int index = 0;
                 foreach (var rank in result) {
-                    rankCaptionTexts[i].text = rank.Caption;
-                    rankTexts[i].text = rank.Rank == int.MaxValue ? "" : rank.Rank.ToString();
-                    i++;
+                    rankCaptionTexts[index].text = rank.Caption;
+                    rankTexts[index].text = rank.Rank == int.MaxValue ? "" : rank.Rank.ToString();
+                    index++;
                 }
 
                 isRankLoad = true;
             });
         });
 
-        var menuBtn = transform.FindChild("Panel/Panel_Bottom/Button_Menu").GetComponent<Button>();
+        var menuBtn = transform.Find("Panel/Panel_Bottom/Button_Menu").GetComponent<Button>();
         menuBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             SetPanel(menuPanel, menuBtn);
@@ -154,7 +172,7 @@ public class HomePanel : MonoBehaviour {
         currentPanel = homePanel;
         currentBtn = homeBtn;
 
-        if (panelIndex == 1 /*&& PlayerPrefs.GetInt(Define.PP_ChallengeFinish) > 0*/) {
+        if (panelIndex == 1) {
             panelIndex = 0;
             SetPanel(trainPanel, trainBtn, false);
         } else {
@@ -165,8 +183,8 @@ public class HomePanel : MonoBehaviour {
         //=============================================================
         //  Exit
         //=============================================================
-        GameObject exitImg = transform.FindChild("Panel/Image_Exit").gameObject;
-        GameObject maskPanel = transform.FindChild("Panel/Panel_Mask").gameObject;
+        GameObject exitImg = transform.Find("Panel/Image_Exit").gameObject;
+        GameObject maskPanel = transform.Find("Panel/Panel_Mask").gameObject;
 
         MessagePanel.MessageHandler logoutHandler = delegate() {
             SetPanel(homePanel, homeBtn, false);
@@ -189,9 +207,9 @@ public class HomePanel : MonoBehaviour {
             maskPanel.SetActive(false);
             exitImg.SetActive(false);
         });
-        exitImg.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backExitAction);
-        exitImg.transform.FindChild("Button_Cancel").GetComponent<Button>().onClick.AddListener(backExitAction);
-        exitImg.transform.FindChild("Button_Ok").GetComponent<Button>().onClick.AddListener(delegate() {
+        exitImg.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backExitAction);
+        exitImg.transform.Find("Button_Cancel").GetComponent<Button>().onClick.AddListener(backExitAction);
+        exitImg.transform.Find("Button_Ok").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             Application.Quit();
         });
@@ -204,21 +222,20 @@ public class HomePanel : MonoBehaviour {
             // exitImg.GetComponent<Animator>().Play("", -1, 0f);
             utils.PushBackAction(backExitAction);
         };
-        transform.FindChild("Panel/Button_Exit").GetComponent<Button>().onClick.AddListener(exitAction);
+        transform.Find("Panel/Button_Exit").GetComponent<Button>().onClick.AddListener(exitAction);
         utils.SetBeginBackAction(exitAction);
 
         //=============================================================
         //  首頁
         //=============================================================        
-        homePanel.transform.FindChild("Button_Play").GetComponent<Button>().onClick.AddListener(delegate() {
+        homePanel.transform.Find("Button_Play").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
             int[] indexs;
-            var today = DateTime.Now.ToString("dd/MM/yyyy");
 
             var indexsStr = PlayerPrefs.GetString(Define.PP_ChallengeIndexs);
             var date = PlayerPrefs.GetString(Define.PP_ChallengeDate);
-            if (date == today && indexsStr != "" && indexsStr.Count(f => f == '-') != 2) {
+            if (indexsStr != "" && indexsStr.Count(f => f == '-') != 2) {
                 indexs = indexsStr.Split('-').Select(int.Parse).ToArray();
             } else {
                 int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).ToArray();
@@ -234,35 +251,50 @@ public class HomePanel : MonoBehaviour {
             }
             
             PlayerPrefs.SetString(Define.PP_ChallengeIndexs, indexsStr);
-            PlayerPrefs.SetString(Define.PP_ChallengeDate, today);
             userInfo.Room.IsChallenge = true;
 
             utils.FadeScene(Define.SCENE_GAME_INTRO, fading);
         });
 
-        
-        for (int i = 0; i < Define.gameInfo.Count(); i++) {
-            //=============================================================
-            //  訓練
-            //=============================================================
-            int index = i;
-            string name = "Scroll View/Viewport/Content/Button_" + (i + 1);
-            trainPanel.transform.FindChild(name + "/Text").GetComponent<Text>().text = Define.gameInfo[i][0];
-            trainPanel.transform.FindChild(name).GetComponent<Button>().onClick.AddListener(delegate() {
-                audioManager.PlaySound((int)Define.Sound.Click);
-                userInfo.Room.GameIndexs.Add(index);
-                utils.FadeScene(Define.SCENE_GAME_INTRO, fading);
-            });
+        var groups = new int[][] {
+            new int[] {2, 4, 14, 15, 19},
+            new int[] {5, 6, 7, 8, 20},
+            new int[] {9, 10, 11},
+            new int[] {1, 3, 12, 13, 16},
+            new int[] {17, 18, 21, 22},
+        };
+        for (int i = 0; i < groups.Length; i++) {
+            for (int j = 0; j < groups[i].Length; j++) {
+                //=============================================================
+                //  訓練
+                //=============================================================
+                int index = groups[i][j] - 1;
+                string name = "Scroll View/Viewport/Content/ScrollView_" + (i+1) + "/Viewport/Content/Button_" + groups[i][j];
+                trainCaptionTexts[index] = trainPanel.transform.Find(name + "/Text").GetComponent<Text>();
+                trainCaptionTexts[index].text = lang.getString("game_name_" + (index + 1));
+                trainPanel.transform.Find(name).GetComponent<Button>().onClick.AddListener(delegate() {
+                    audioManager.PlaySound((int)Define.Sound.Click);
+                    userInfo.Room.GameIndexs.Add(index);
+                    utils.FadeScene(Define.SCENE_GAME_INTRO, fading);
+                });
 
-            //=============================================================
-            //  成績
-            //=============================================================
-            name = "Scroll View/Viewport/Content/Panel_" + (i + 1);
-            rankCaptionTexts[i] = rankPanel.transform.FindChild(name + "/Text_Name").GetComponent<Text>();
-            rankTexts[i] = rankPanel.transform.FindChild(name + "/Text_Rank").GetComponent<Text>();
+                //=============================================================
+                //  成績
+                //=============================================================
+                name = "Scroll View/Viewport/Content/Panel_" + groups[i][j];
+                rankCaptionTexts[index] = rankPanel.transform.Find(name + "/Text_Name").GetComponent<Text>();
+                rankTexts[index] = rankPanel.transform.Find(name + "/Text_Rank").GetComponent<Text>();
+            }
         }
+        var groupTexts = new Text[] {
+            trainPanel.transform.Find("Scroll View/Viewport/Content/Text_1").GetComponent<Text>(),
+            trainPanel.transform.Find("Scroll View/Viewport/Content/Text_2").GetComponent<Text>(),
+            trainPanel.transform.Find("Scroll View/Viewport/Content/Text_3").GetComponent<Text>(),
+            trainPanel.transform.Find("Scroll View/Viewport/Content/Text_4").GetComponent<Text>(),
+            trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5/Text_5").GetComponent<Text>(),
+        };
 
-        var rankArrow = rankPanel.transform.FindChild("Image").gameObject;
+        var rankArrow = rankPanel.transform.Find("Image").gameObject;
         rankScrollRect.GetComponent<ScrollRect>().onValueChanged.AddListener(delegate(Vector2 value) {
             if (rankArrow.activeSelf && value.y <= 0) {
                 rankArrow.SetActive(false);
@@ -276,31 +308,31 @@ public class HomePanel : MonoBehaviour {
         //=============================================================
         string menuContent = "Scroll View/Viewport/Content";
 
-        var newContentPanel = newsPanel.transform.FindChild("Scroll View/Viewport/Content");
+        var newContentPanel = newsPanel.transform.Find("Scroll View/Viewport/Content");
         var newRow = Resources.Load<GameObject>("Prefabs/Panel_News_Row");
         var isNewsLoad = false;
 
         UnityAction backMenuAction = utils.CreateBackAction(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
-            Utils.Instance.PlayAnimation(newsPanel.GetComponent<Animation>(), delegate() {
+            Utils.Instance.PlayAnimation(newsPanel.GetComponent<Animation>(), "page_out", delegate() {
                 newsPanel.SetActive(false);
-            }, 0, "page_out");
+            });
 
             menuPanel.SetActive(true);
-            Utils.Instance.PlayAnimation(menuPanel.GetComponent<Animation>(), null, 0, "page_fadein");
+            Utils.Instance.PlayAnimation(menuPanel.GetComponent<Animation>(), "page_fadein");
         });
-        newsPanel.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backMenuAction);
+        newsPanel.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backMenuAction);
 
-        menuPanel.transform.FindChild(menuContent + "/Button_News").GetComponent<Button>().onClick.AddListener(delegate() {
+        menuPanel.transform.Find(menuContent + "/Button_News").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
             newsPanel.SetActive(true);
-            Utils.Instance.PlayAnimation(newsPanel.GetComponent<Animation>(), null, 0, "page_in");
+            Utils.Instance.PlayAnimation(newsPanel.GetComponent<Animation>(), "page_in");
 
-            Utils.Instance.PlayAnimation(menuPanel.GetComponent<Animation>(), delegate() {
+            Utils.Instance.PlayAnimation(menuPanel.GetComponent<Animation>(), "page_fadeout", delegate() {
                 menuPanel.SetActive(false);
-            }, 0, "page_fadeout");
+            });
 
             utils.PushBackAction(backMenuAction);
 
@@ -321,13 +353,13 @@ public class HomePanel : MonoBehaviour {
                     var go = Instantiate<GameObject>(newRow);
                     go.transform.SetParent(newContentPanel);
                     go.transform.localScale = Vector3.one;
-                    go.transform.FindChild("Text_Date").GetComponent<Text>().text = news["create_time"].str;
-                    go.transform.FindChild("Text_Content").GetComponent<Text>().text = news["content"].str;
+                    go.transform.Find("Text_Date").GetComponent<Text>().text = news["create_time"].str;
+                    go.transform.Find("Text_Content").GetComponent<Text>().text = news["content"].str;
                 }
             });
         });
 
-        menuPanel.transform.FindChild(menuContent + "/Panel_Version/Text").GetComponent<Text>().text
+        menuPanel.transform.Find(menuContent + "/Panel_Version/Text").GetComponent<Text>().text
             += Application.version;
         
         var urls = new string[] {
@@ -337,18 +369,18 @@ public class HomePanel : MonoBehaviour {
             "http://www.viscol.org/" // 視覺認知實驗室
         };
         for (int i = 0; i < urls.Length; i++){
-            var url = urls[i];
-            menuPanel.transform.FindChild(menuContent + "/Button_" + (i + 1)).GetComponent<Button>().onClick.AddListener(delegate() {
+            var index = i;
+            menuPanel.transform.Find(menuContent + "/Button_" + (i + 1)).GetComponent<Button>().onClick.AddListener(delegate() {
                 audioManager.PlaySound((int)Define.Sound.Click);
-                Application.OpenURL(url);
+                Application.OpenURL(urls[index]);
             });
         }
 
         //------------------------
         // music
         //------------------------
-        Toggle musicToggle = menuPanel.transform.FindChild(menuContent + "/Panel_Music/Toggle").GetComponent<Toggle>();
-        Image musicOffBg = menuPanel.transform.FindChild(menuContent + "/Panel_Music/Toggle/Background").GetComponent<Image>();
+        Toggle musicToggle = menuPanel.transform.Find(menuContent + "/Panel_Music/Toggle").GetComponent<Toggle>();
+        Image musicOffBg = menuPanel.transform.Find(menuContent + "/Panel_Music/Toggle/Background").GetComponent<Image>();
         musicToggle.onValueChanged.AddListener(delegate(bool isOn) {
             audioManager.PlaySound((int)Define.Sound.Click);
             musicOffBg.enabled = !isOn;
@@ -360,8 +392,8 @@ public class HomePanel : MonoBehaviour {
         //------------------------
         // sound
         //------------------------
-        Toggle soundToggle = menuPanel.transform.FindChild(menuContent + "/Panel_Sound/Toggle").GetComponent<Toggle>();
-        Image soundOffBg = menuPanel.transform.FindChild(menuContent + "/Panel_Sound/Toggle/Background").GetComponent<Image>();
+        Toggle soundToggle = menuPanel.transform.Find(menuContent + "/Panel_Sound/Toggle").GetComponent<Toggle>();
+        Image soundOffBg = menuPanel.transform.Find(menuContent + "/Panel_Sound/Toggle/Background").GetComponent<Image>();
         soundToggle.onValueChanged.AddListener(delegate(bool isOn) {
             audioManager.PlaySound((int)Define.Sound.Click);
             soundOffBg.enabled = !isOn;
@@ -370,7 +402,69 @@ public class HomePanel : MonoBehaviour {
         });
         soundToggle.isOn = PlayerPrefs.GetInt(Define.PP_Sound, 1) > 0;
 
-        menuPanel.transform.FindChild(menuContent + "/Button_Logout").GetComponent<Button>().onClick.AddListener(delegate() {
+        //------------------------
+        // language
+        //------------------------
+        LanguageText[] langTexts = Resources.FindObjectsOfTypeAll(typeof(LanguageText)) as LanguageText[];
+        var langDropdown = menuPanel.transform.Find(menuContent + "/Panel_Language/Dropdown").GetComponent<Dropdown>();
+        var trainPanel5 = trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5").gameObject;
+        var trainImg2 = trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_1/Viewport/Content/Button_2").GetComponent<Image>();
+        var langList = new List<string>() {lang.getString("lang_1"), lang.getString("lang_2")};
+        var langs = new List<string>() {"Chinese", "English"};
+
+        var rankItems = new GameObject[] {
+            rankPanel.transform.Find("Scroll View/Viewport/Content/Panel_19").gameObject,
+            rankPanel.transform.Find("Scroll View/Viewport/Content/Panel_20").gameObject,
+            rankPanel.transform.Find("Scroll View/Viewport/Content/Panel_21").gameObject,
+            rankPanel.transform.Find("Scroll View/Viewport/Content/Panel_22").gameObject,
+        };
+
+        UnityAction<int> changeTrainLang = delegate(int value) {
+            var font = fonts[value];
+            var fontSize = fontSizes[value];
+            foreach (var text in groupTexts) {
+				text.font = fonts[value];
+                text.fontSize = fontSize;
+            }
+
+            var isChinese = value == 0;
+            trainPanel5.SetActive(isChinese);
+            trainImg2.sprite = Resources.Load<Sprite>("Sprites/train_no_2" + (isChinese ? "" : "_en"));
+
+            isRankLoad = false;
+            langRankIndexs = value == 0 ? new int[] {} : new int[] {16, 17, 20, 21};
+            foreach (var item in rankItems) {
+				item.SetActive(isChinese);
+            }
+        };
+
+        langDropdown.AddOptions(langList);
+        langDropdown.value = langList.IndexOf(PlayerPrefs.GetString(Define.PP_Language, "Chinese"));
+        langDropdown.onValueChanged.AddListener(delegate {
+            string language = langs[langDropdown.value];
+            PlayerPrefs.SetString(Define.PP_Language, language);
+            lang.setLanguage(Resources.Load<TextAsset>("lang").text, language);
+
+            LanguageService.Instance.Language = new LanguageInfo(language);
+			foreach (var text in langTexts) {
+				text.Reload();
+			}
+
+            changeTrainLang(langDropdown.value);
+
+            for (int i = 0; i < Define.gameInfo.Length; i++) {
+                trainCaptionTexts[i].text = lang.getString("game_name_" + (i + 1));
+            }
+
+            for (int i = 0; i < 4; i++) {
+                urls[i] = systemManager.GetValue("link_" + (language == "Chinese" ? "tw_" : "en_") + (i+1));
+            }
+
+            Restful.Instance.AcceptLanguage = language == "Chinese" ? "zh-TW" : "en";
+        });
+        changeTrainLang(langDropdown.value);
+
+        menuPanel.transform.Find(menuContent + "/Button_Logout").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             MessagePanel.ShowOkCancel(lang.getString("is_logout"), delegate() {
                 logoutHandler();
@@ -381,7 +475,7 @@ public class HomePanel : MonoBehaviour {
         //=============================================================
         // Network
         //=============================================================
-        var accountText = homePanel.transform.FindChild("Text_Account").GetComponent<Text>();
+        var accountText = homePanel.transform.Find("Text_Account").GetComponent<Text>();
 
         UnityAction initCB = delegate() {
             accountText.text = "ID: " + userInfo.Account;
@@ -415,17 +509,11 @@ public class HomePanel : MonoBehaviour {
                 }
                 
                 if (json.HasField("need_upgrade")) {
-        
+                    MessagePanel.ShowMessage(json["msg"].str, delegate() {
+                        Application.Quit();
+                    });
+                    return;
                 }
-
-                //------------------------------------------
-                // Challenge Finish Count
-                //------------------------------------------
-                // var today = DateTime.Now.ToString("dd/MM/yyyy");
-                // var date = PlayerPrefs.GetString(Define.PP_ChallengeDate);
-                // if (date != today) {
-                //     PlayerPrefs.SetInt(Define.PP_ChallengeFinish, 0);
-                // }
 
                 Utils.SendRepeatingNotification();
                 MessagePanel.ShowMessage(userInfo.Account + " " + lang.getString("enter_hi"));
@@ -584,6 +672,32 @@ public class HomePanel : MonoBehaviour {
                     data.images = strList.ToArray();
                 }
 
+                if (game.HasField("second")) {
+                    data.second = (int)game["second"].n;
+                }
+
+                systemManager.SetGameData(data);
+            }
+
+            // extra game data
+            JSONObject gameExtras;
+            if (json.HasField("game_extras")) { // new game extra data
+                gameExtras = json["game_extras"];
+                var oldGameExtras = new JSONObject(PlayerPrefs.GetString(Define.PP_GameExtra));
+                if (oldGameExtras != null) {
+                    for (int i = 0; i < gameExtras.list.Count; i++) {
+                        if (!gameExtras.list[i].HasField("data")) {
+                            gameExtras.list[i] = oldGameExtras.list[i];
+                        }
+                    }
+                }
+                PlayerPrefs.SetString(Define.PP_GameExtra, gameExtras.Print());
+            } else {
+                gameExtras = new JSONObject(PlayerPrefs.GetString(Define.PP_GameExtra));
+            }
+            foreach (var game in gameExtras.list) {
+                var data = systemManager.GetGameData((int)game["index"].n);
+                data.dataJSON = game["data"].str.Replace("\\\"", "\"");
                 systemManager.SetGameData(data);
             }
 
@@ -610,6 +724,11 @@ public class HomePanel : MonoBehaviour {
                 foreach (JSONObject system in json["systems"].list) {
                     systemManager.SetValue(system["key"].str, system["value"].str);
                 }
+            }
+
+            string language = PlayerPrefs.GetString(Define.PP_Language, "Chinese");
+            for (int i = 0; i < 4; i++) {
+                urls[i] = systemManager.GetValue("link_" + (language == "Chinese" ? "tw_" : "en_") + (i+1));
             }
 
             action = delegate() {

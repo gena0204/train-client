@@ -6,16 +6,43 @@ using UnityEngine.Events;
 
 public class Game_13 : Game_12 {
 
+	private GameObject startButton;
+	private float rememberTime;
+
 	public Game_13() : base() {
     }
 
 	// Use this for initialization
-	// void Start () {
-	// }
+	void Start () {
+		Init();
+
+		AudioManager audioManager = AudioManager.Instance;
+
+		startButton = transform.Find("Button_Start").gameObject;
+		startButton.GetComponent<Button>().onClick.AddListener(delegate() {
+			audioManager.PlaySound((int)Define.Sound.Click);
+			rememberTime = (int)((Time.time - rememberTime) * 1000);
+			EnableButton(true);
+			startButton.SetActive(false);
+
+			buttons[startIndex].SetActive(false);
+			startArrows[startIndex/3].SetActive(true);
+		});
+
+		SetLevel(0);
+		CreateQuestion();
+		Prepare();
+	}
 	
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	protected override void Prepare() {
+		startButton.SetActive(true);
+		rememberTime = Time.time;
+		EnableButton(false);
 	}
 
 	protected override void CheckLevel() {
@@ -87,5 +114,29 @@ public class Game_13 : Game_12 {
 		base.CreateQuestion();
 
 		type = currentArrowSize == currentMatchSize ? "S" : "D"; // 經過箭頭數與難度相同- S,  差一種- D
+	}
+
+	public override JSONObject CreateHistory() {
+		question = ((startIndex + 10) % 12 + 1).ToString();
+		string end = ((answerIndex + 10) % 12 + 1).ToString();
+
+		var json = new JSONObject();
+		json.AddField("level",   		level); // 難度
+		json.AddField("level_value",   	levelValue); // 難度
+		json.AddField("type",   		type); // 類型
+		json.AddField("question",   	question); // 起點
+		json.AddField("right",   		end); // 終點
+		json.AddField("reaction",   	reaction); // 反應
+		json.AddField("remember_ms",   	(int)rememberTime); // 記憶時間
+		return json;
+	}
+
+	public override void GameOver() {
+		if (startButton.activeSelf == false) {
+			rememberTime = 0;
+		}
+		if (reaction == "") {
+			Game.self.Next(true, false);
+		}
 	}
 }

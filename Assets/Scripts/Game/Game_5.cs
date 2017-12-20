@@ -27,7 +27,7 @@ public class Game_5 : GameBase {
 
 		for (int i = 0; i < 9; i++) {
 			int index = i;
-			cards[i] = transform.FindChild("Panel/Button_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				if (!isStart) return;
 				audioManager.PlaySound((int)Define.Sound.Click);
@@ -54,8 +54,8 @@ public class Game_5 : GameBase {
 	}
 
 	private void CheckLevel() {
-		if (Game.self.rightCount == levelCondition) {
-			SetLevel(1);
+		if (Game.self.rightCount%levelCondition == 0) {
+			SetLevel(level+1);
 		}
 	}
 
@@ -69,6 +69,26 @@ public class Game_5 : GameBase {
 
 			case 1:
 				currentCardSize = 4;
+				break;
+
+			case 2:
+				currentCardSize = 5;
+				break;
+
+			case 3:
+				currentCardSize = 6;
+				break;
+
+			case 4:
+				currentCardSize = 7;
+				break;
+
+			case 5:
+				currentCardSize = 8;
+				break;
+
+			case 6:
+				currentCardSize = 9;
 				break;
 
 			default:

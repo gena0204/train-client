@@ -20,13 +20,13 @@ public class Game_10 : GameBase {
 
 		for (int i = 0; i < 4; i++) {
 			int index = i;
-			transform.FindChild("Button_" + (i+1)).GetComponent<Button>().onClick.AddListener(delegate() {
+			transform.Find("Button_" + (i+1)).GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				Answer(index);
 			});
 		}
 
-		questionObj = transform.FindChild("Text").gameObject;
+		questionObj = transform.Find("Text").gameObject;
 		questionText = questionObj.GetComponent<Text>();
 
 		CreateQuestion();
@@ -106,7 +106,7 @@ public class Game_10 : GameBase {
 		lastQuestion = str;
 
 		questionText.text = string.Format("{0}  ▢  {1}  =  {2}", num1, num2, num3);
-		Utils.Instance.PlayAnimation(questionObj.GetComponent<Animation>(), null, 0.0f, "fadein_up");
+		Utils.Instance.PlayAnimation(questionObj.GetComponent<Animation>(), "fadein_up");
 
 		question = (answerIndex + 1).ToString(); // 題目- 加-1, 減-2, 乘-3, 除-4 
 	}

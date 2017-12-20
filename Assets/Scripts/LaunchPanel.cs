@@ -7,7 +7,8 @@ using System.Collections.Generic;
 
 public class LaunchPanel : MonoBehaviour {
 
-    // private string password = "";
+    [SerializeField]
+    private Fading fading;
 
     // Use this for initialization
     void Start() {
@@ -17,24 +18,25 @@ public class LaunchPanel : MonoBehaviour {
         Lang lang = Lang.Instance;
 
         // GameObject startImg = transform.FindChild("Image_Start").gameObject;
-        GameObject loginImg = transform.FindChild("Image_Login").gameObject;
+        GameObject loginImg = transform.Find("Image_Login").gameObject;
         // GameObject contactPanel = transform.FindChild("Panel_Contact").gameObject;
-        GameObject privacyPanel = transform.FindChild("Panel_Privacy").gameObject;
-        GameObject registerImg = transform.FindChild("Image_Register").gameObject;
-        GameObject register2Img = transform.FindChild("Image_Register_2").gameObject;
+        GameObject privacyPanel = transform.Find("Panel_Privacy").gameObject;
+        GameObject registerImg = transform.Find("Image_Register").gameObject;
+        GameObject register2Img = transform.Find("Image_Register_2").gameObject;
        
-        InputField accountRInput = registerImg.transform.FindChild("InputField_Account").GetComponent<InputField>();
-        InputField passwordRInput = registerImg.transform.FindChild("InputField_Password").GetComponent<InputField>();
-
+    
         // -------------------------------------------------
         // Register 2
         // -------------------------------------------------
+        InputField accountRInput = registerImg.transform.Find("InputField_Account").GetComponent<InputField>();
+        InputField passwordRInput = registerImg.transform.Find("InputField_Password").GetComponent<InputField>();
+
         UnityAction backReg2Action = utils.CreateBackAction(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
-            Utils.Instance.PlayAnimation(register2Img.GetComponent<Animation>(), null, 0, "page_out");
-            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), null, 0, "page_fadein");
+            Utils.Instance.PlayAnimation(register2Img.GetComponent<Animation>(), "page_out");
+            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), "page_fadein");
         });
-        register2Img.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backReg2Action);
+        register2Img.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backReg2Action);
 
         int currentSexIndex = 0;
         var sexToggles = new Toggle[3];
@@ -43,9 +45,9 @@ public class LaunchPanel : MonoBehaviour {
         var color = new Color(255/255.0f, 159/255.0f, 56/255.0f);
         for (int i = 0; i < 3; i++) {
             int index = i;
-            sexToggles[i] = register2Img.transform.FindChild("Toggle_" + (i + 1)).GetComponent<Toggle>();
-            sexTexts[i] = register2Img.transform.FindChild("Toggle_" + (i + 1) + "/Label").GetComponent<Text>();
-            sexBgs[i]= register2Img.transform.FindChild("Toggle_" + (i + 1) + "/Background").GetComponent<Image>();
+            sexToggles[i] = register2Img.transform.Find("Toggle_" + (i + 1)).GetComponent<Toggle>();
+            sexTexts[i] = register2Img.transform.Find("Toggle_" + (i + 1) + "/Label").GetComponent<Text>();
+            sexBgs[i]= register2Img.transform.Find("Toggle_" + (i + 1) + "/Background").GetComponent<Image>();
             sexToggles[i].onValueChanged.AddListener(delegate(bool isOn) {
                 audioManager.PlaySound((int)Define.Sound.Click);
                 sexBgs[index].enabled = !isOn;
@@ -59,7 +61,7 @@ public class LaunchPanel : MonoBehaviour {
             });
         }
 
-        var yearDropdown = register2Img.transform.FindChild("Dropdown_Year").GetComponent<Dropdown>();
+        var yearDropdown = register2Img.transform.Find("Dropdown_Year").GetComponent<Dropdown>();
         var year = System.DateTime.Now.Year;
         var yearList = new List<string>();
         for (int i = year; i >= (year - 100); i--) {
@@ -67,14 +69,14 @@ public class LaunchPanel : MonoBehaviour {
         }
         yearDropdown.AddOptions(yearList);
 
-        var educationDropdown = register2Img.transform.FindChild("Dropdown_Education").GetComponent<Dropdown>();
+        var educationDropdown = register2Img.transform.Find("Dropdown_Education").GetComponent<Dropdown>();
         var educationList = new List<string>();
         for (int i = 0; i < 6; i++) {
             educationList.Add(lang.getString("education_" + (i + 1)));
         }
         educationDropdown.AddOptions(educationList);
 
-        register2Img.transform.FindChild("Button_Register").GetComponent<Button>().onClick.AddListener(delegate() {
+        register2Img.transform.Find("Button_Register").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             if (LoadingPanel.IsShow()) {
                 return;
@@ -99,6 +101,8 @@ public class LaunchPanel : MonoBehaviour {
                     userInfo.Token = userInfo.LocalToken = json["token"].str;
                     userInfo.Account = userInfo.LocalAccount = accountRInput.text;
 
+                    Restful.Instance.Authorization = "Bearer " + userInfo.Token;
+
                     // Destroy(GameObject.Find("Canvas_Launch"));
                     SceneManager.UnloadSceneAsync(Define.SCENE_LAUNCH);
                     utils.PopBackAction(); // pop exit dialog
@@ -115,18 +119,18 @@ public class LaunchPanel : MonoBehaviour {
         // -------------------------------------------------
         UnityAction backRegAction = utils.CreateBackAction(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
-            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), null, 0, "page_out");
-            Utils.Instance.PlayAnimation(loginImg.GetComponent<Animation>(), null, 0, "page_fadein");
+            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), "page_out");
+            Utils.Instance.PlayAnimation(loginImg.GetComponent<Animation>(), "page_fadein");
         });
-        registerImg.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backRegAction);
+        registerImg.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backRegAction);
 
         bool isPrivacyAgree = false;
-        registerImg.transform.FindChild("Toggle_Privacy").GetComponent<Toggle>().onValueChanged.AddListener(delegate(bool isOn) {
+        registerImg.transform.Find("Toggle_Privacy").GetComponent<Toggle>().onValueChanged.AddListener(delegate(bool isOn) {
             audioManager.PlaySound((int)Define.Sound.Click);
             isPrivacyAgree = isOn;
         });
 
-        registerImg.transform.FindChild("Button_Next").GetComponent<Button>().onClick.AddListener(delegate() {
+        registerImg.transform.Find("Button_Next").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             if (LoadingPanel.IsShow()) {
                 return;
@@ -155,8 +159,8 @@ public class LaunchPanel : MonoBehaviour {
                     }
 
                     register2Img.SetActive(true);
-                    Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), null, 0, "page_fadeout");
-                    Utils.Instance.PlayAnimation(register2Img.GetComponent<Animation>(), null, 0, "page_in");
+                    Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), "page_fadeout");
+                    Utils.Instance.PlayAnimation(register2Img.GetComponent<Animation>(), "page_in");
                     utils.PushBackAction(backReg2Action);
                 });
             }
@@ -164,31 +168,31 @@ public class LaunchPanel : MonoBehaviour {
 
         UnityAction backPrivacyAction = utils.CreateBackAction(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
-            Utils.Instance.PlayAnimation(privacyPanel.GetComponent<Animation>(), delegate() {
+            Utils.Instance.PlayAnimation(privacyPanel.GetComponent<Animation>(), "page_out", delegate() {
                 privacyPanel.SetActive(false);
-            }, 0, "page_out");
-            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), null, 0, "page_fadein");
+            });
+            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), "page_fadein");
         });
-        privacyPanel.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backPrivacyAction);
+        privacyPanel.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backPrivacyAction);
 
-        privacyPanel.transform.FindChild("Text_Title").GetComponent<Text>().text = 
+        privacyPanel.transform.Find("Text_Title").GetComponent<Text>().text = 
             lang.getString("privacy_title");
-        privacyPanel.transform.FindChild("Scroll View/Viewport/Content/Text").GetComponent<Text>().text = 
+        privacyPanel.transform.Find("Scroll View/Viewport/Content/Text").GetComponent<Text>().text = 
             lang.getString("privacy_content");
 
-        registerImg.transform.FindChild("Button_Privacy").GetComponent<Button>().onClick.AddListener(delegate() {
+        registerImg.transform.Find("Button_Privacy").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             privacyPanel.SetActive(true);
-            Utils.Instance.PlayAnimation(privacyPanel.GetComponent<Animation>(), null, 0, "page_in");
-            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), null, 0, "page_fadeout");
+            Utils.Instance.PlayAnimation(privacyPanel.GetComponent<Animation>(), "page_in");
+            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), "page_fadeout");
             utils.PushBackAction(backPrivacyAction);
         });
 
         // -------------------------------------------------
         // Login
         // -------------------------------------------------
-        InputField accountInput = loginImg.transform.FindChild("InputField_Account").GetComponent<InputField>();
-        InputField passwordInput = loginImg.transform.FindChild("InputField_Password").GetComponent<InputField>();
+        InputField accountInput = loginImg.transform.Find("InputField_Account").GetComponent<InputField>();
+        InputField passwordInput = loginImg.transform.Find("InputField_Password").GetComponent<InputField>();
 
         UnityAction existAction = delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
@@ -205,9 +209,9 @@ public class LaunchPanel : MonoBehaviour {
         // UnityAction backLoginAction = utils.CreateBackAction(existAction);
         UnityAction backLoginAction = existAction;
         
-        loginImg.transform.FindChild("Button_Back").GetComponent<Button>().onClick.AddListener(backLoginAction);
+        loginImg.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backLoginAction);
 
-        loginImg.transform.FindChild("Button_Login").GetComponent<Button>().onClick.AddListener(delegate() {
+        loginImg.transform.Find("Button_Login").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             if (accountInput.text == "") {
                 MessagePanel.ShowMessage(lang.getString("input_account"));
@@ -230,6 +234,8 @@ public class LaunchPanel : MonoBehaviour {
                         userInfo.Token = userInfo.LocalToken = json["token"].str;
                         userInfo.Account = userInfo.LocalAccount = accountInput.text;
 
+                        Restful.Instance.Authorization = "Bearer " + userInfo.Token;
+
                         // Destroy(GameObject.Find("Canvas_Launch"));
                         SceneManager.UnloadSceneAsync(Define.SCENE_LAUNCH);
                         utils.PopBackAction(); // pop exit dialog
@@ -242,12 +248,12 @@ public class LaunchPanel : MonoBehaviour {
             }
         });
 
-        loginImg.transform.FindChild("Button_Register").GetComponent<Button>().onClick.AddListener(delegate() {
+        loginImg.transform.Find("Button_Register").GetComponent<Button>().onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
             registerImg.SetActive(true);
             registerImg.GetComponent<CanvasGroup>().alpha = 1;
-            Utils.Instance.PlayAnimation(loginImg.GetComponent<Animation>(), null, 0, "page_fadeout");
-            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), null, 0, "page_in");
+            Utils.Instance.PlayAnimation(loginImg.GetComponent<Animation>(), "page_fadeout");
+            Utils.Instance.PlayAnimation(registerImg.GetComponent<Animation>(), "page_in");
             utils.PushBackAction(backRegAction);
         });
 

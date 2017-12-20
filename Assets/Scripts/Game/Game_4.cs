@@ -41,15 +41,15 @@ public class Game_4 : GameBase {
 	void Start () {
 		AudioManager audioManager = AudioManager.Instance;
 
-		basket = transform.FindChild("Image_Basket");
-		bgs[0] = transform.FindChild("Panel_1");
-		bgs[1] = transform.FindChild("Panel_2");
+		basket = transform.Find("Image_Basket");
+		bgs[0] = transform.Find("Panel_1");
+		bgs[1] = transform.Find("Panel_2");
 
 		objectPrefabs[0] = Resources.Load<GameObject>("Prefabs/Image_Eggs");
 		objectPrefabs[1] = Resources.Load<GameObject>("Prefabs/Image_Stone");
 
-		basketPos[0] = objectPos[0] = transform.FindChild("Image_Left").position;
-		basketPos[1] = objectPos[1] = transform.FindChild("Image_Right").position;
+		basketPos[0] = objectPos[0] = transform.Find("Image_Left").position;
+		basketPos[1] = objectPos[1] = transform.Find("Image_Right").position;
 		basketPos[0].y = basket.position.y; basketPos[1].y = basket.position.y;
 		objectPos[0].y = basket.position.y; objectPos[1].y = basket.position.y;
 
@@ -64,10 +64,10 @@ public class Game_4 : GameBase {
 
 		offset = Screen.height / 5;
 
-		transform.FindChild("Button_Left").GetComponent<Button>().onClick.AddListener(delegate() {
+		transform.Find("Button_Left").GetComponent<Button>().onClick.AddListener(delegate() {
 			Answer(0);
 		});
-		transform.FindChild("Button_Right").GetComponent<Button>().onClick.AddListener(delegate() {
+		transform.Find("Button_Right").GetComponent<Button>().onClick.AddListener(delegate() {
 			Answer(1);
 		});
 
@@ -213,9 +213,9 @@ public class Game_4 : GameBase {
 				if (q.objects[i]) {
 					var obj = q.objects[i];
 					finishObjQ.Enqueue(obj);
-					Utils.Instance.PlayAnimation(obj.GetComponent<Animation>(), delegate() {
+					Utils.Instance.PlayAnimation(obj.GetComponent<Animation>(), "fadeout", delegate() {
 						RecycleObject(obj);
-					}, 0, "fadeout");
+					});
 				}
 			}
 

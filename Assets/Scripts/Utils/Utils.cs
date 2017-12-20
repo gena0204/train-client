@@ -82,7 +82,7 @@ public class Utils : Singleton<Utils> {
 			stackTrace = stackTrace.Replace("\n", "\\n");
 
 			JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
-			data.AddField("token",      	UserInfo.Instance.Token);
+            data.AddField("token",          UserInfo.Instance.Token);
 			data.AddField("log",       		logString);
 			data.AddField("stack_trace",	stackTrace);
 			Restful.Instance.Request(Define.API_Crash, data, (json) => {
@@ -305,8 +305,7 @@ public class Utils : Singleton<Utils> {
                 else if (times >= 3) {
                     if (imageUrl.IndexOf(Define.FILE_URL) == -1) {
                         imageUrl = Define.FILE_URL + url;
-                    }
-                    else {
+                    } else {
                         break;
                     }
                 }
@@ -410,7 +409,7 @@ public class Utils : Singleton<Utils> {
     //------------------------------------------------------------------------------------
     private Dictionary<Animation, Coroutine> animationDict = new Dictionary<Animation, Coroutine>();
 
-    public void PlayAnimation(Animation animation, UnityAction callback = null, float callbackDelayTime = 0, string clipName = "") {
+    public void PlayAnimation(Animation animation, string clipName = "", UnityAction callback = null, float callbackDelaySecond = 0) {
         StopAnimation(animation);
         
         if (clipName != "") {
@@ -419,20 +418,20 @@ public class Utils : Singleton<Utils> {
             animation.Play();
         }
 
-        animationDict.Add(animation, StartCoroutine(WaitForAnimation(callbackDelayTime, animation, callback)));
+        animationDict.Add(animation, StartCoroutine(WaitForAnimation(callbackDelaySecond, animation, callback)));
     }
 
-    public void DelayPlayAnimation(float delayTime, Animation animation, UnityAction callback = null,
+    public void DelayPlayAnimation(float delaySecond, Animation animation, UnityAction callback = null,
         float callbackDelayTime = 0, string clipName = "") {
-        if (delayTime <= 0) {
-            PlayAnimation(animation, callback, callbackDelayTime, clipName);
+        if (delaySecond <= 0) {
+            PlayAnimation(animation, clipName, callback, callbackDelayTime);
             return;
         }
 
         StopAnimation(animation);
-        animationDict.Add(animation, StartCoroutine(WaitForProcess(delayTime, delegate() {
+        animationDict.Add(animation, StartCoroutine(WaitForProcess(delaySecond, delegate() {
             animationDict.Remove(animation);
-            PlayAnimation(animation, callback, callbackDelayTime, clipName);
+            PlayAnimation(animation, clipName, callback, callbackDelayTime);
         })));
     }
 
@@ -444,31 +443,68 @@ public class Utils : Singleton<Utils> {
         }
     }
     
-    private IEnumerator WaitForAnimation(float delayTime, Animation animation, UnityAction callback) {
+    private IEnumerator WaitForAnimation(float delaySecond, Animation animation, UnityAction callback) {
         do {
             yield return null;
-        } while (animation.isPlaying);
+        } while (animation && animation.isPlaying);
 
-        if (delayTime > 0) {
-            yield return new WaitForSeconds(delayTime);
+        if (delaySecond > 0) {
+            yield return new WaitForSeconds(delaySecond);
         }
 
-        animationDict.Remove(animation);
+        if (animation) {
+            animationDict.Remove(animation);
+        }
+        
         if (callback != null) {
             callback();
         }
     }
 
     //------------------------------------------------------------------------------------
-    // 
+    // GameObject Move Animation
     //------------------------------------------------------------------------------------
-    public Coroutine StartDelayProcess(float delayTime, UnityAction callback) {
-        return StartCoroutine(WaitForProcess(delayTime, callback));
+    public void MoveOverSpeed(GameObject obj, Vector3 end, float speed, UnityAction callback = null) {
+        StartCoroutine(IEMoveOverSpeed(obj, end, speed, callback));
     }
 
-    private IEnumerator WaitForProcess(float delayTime, UnityAction callback) {
-        if (delayTime > 0) {
-            yield return new WaitForSeconds(delayTime);
+    public void MoveOverSeconds(GameObject obj, Vector3 end, float seconds, UnityAction callback = null) {
+        StartCoroutine(IEMoveOverSeconds(obj, end, seconds, callback));
+    }
+
+    private IEnumerator IEMoveOverSpeed(GameObject obj, Vector3 end, float speed, UnityAction callback) {
+		while (obj.transform.position != end) {
+			obj.transform.position = Vector3.MoveTowards(obj.transform.position, end, speed * Time.deltaTime);
+			yield return new WaitForEndOfFrame();
+		}
+        if (callback != null) {
+            callback();
+        }
+	}
+
+	private IEnumerator IEMoveOverSeconds(GameObject obj, Vector3 end, float seconds, UnityAction callback) {
+		float elapsedTime = 0;
+		while (elapsedTime < seconds) {
+			obj.transform.position = Vector3.Lerp(obj.transform.position, end, (elapsedTime / seconds));
+			elapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
+		obj.transform.position = end;
+        if (callback != null) {
+            callback();
+        }
+	}
+
+    //------------------------------------------------------------------------------------
+    // 
+    //------------------------------------------------------------------------------------
+    public Coroutine StartDelayProcess(float delaySecond, UnityAction callback) {
+        return StartCoroutine(WaitForProcess(delaySecond, callback));
+    }
+
+    private IEnumerator WaitForProcess(float delaySecond, UnityAction callback) {
+        if (delaySecond > 0) {
+            yield return new WaitForSeconds(delaySecond);
         }
         callback();
     }

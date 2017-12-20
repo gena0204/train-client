@@ -39,25 +39,25 @@ public class Game_8 : GameBase {
 
 		for (int i = 0; i < 6; i++) {
 			int index = i;
-			cards[i] = transform.FindChild("Panel/Button_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				cards[index].GetComponent<Button>().interactable = false;
-				utils.PlayAnimation(cards[index].GetComponent<Animation>(), delegate() {
+				utils.PlayAnimation(cards[index].GetComponent<Animation>(), "card_rotation_1", delegate() {
 					cardImages[index].sprite = sprites[1];
 					cardTexts[index].text = questionTexts[index];
-					utils.PlayAnimation(cards[index].GetComponent<Animation>(), delegate() {
+					utils.PlayAnimation(cards[index].GetComponent<Animation>(), "card_rotation_2", delegate() {
 						Answer(index);
-					}, 0.0f, "card_rotation_2");
-				}, 0.0f, "card_rotation_1");
+					});
+				});
 			});
 
 			cardImages[i] = cards[i].transform.GetComponent<Image>();
 			cardButtons[i] = cards[i].transform.GetComponent<Button>();
-			cardTexts[i] = cards[i].transform.FindChild("Text").GetComponent<Text>();
+			cardTexts[i] = cards[i].transform.Find("Text").GetComponent<Text>();
 		}
 
-		startButton = transform.FindChild("Button_Start").gameObject;
+		startButton = transform.Find("Button_Start").gameObject;
 		startButton.GetComponent<Button>().onClick.AddListener(delegate() {
 			audioManager.PlaySound((int)Define.Sound.Click);
 			rememberTime = (int)((Time.time - rememberTime) * 1000);
@@ -88,17 +88,17 @@ public class Game_8 : GameBase {
 	}
 
 	private void CloseCard(int index) {
-		Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), delegate() {
+		Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), "card_rotation_1", delegate() {
 			cardImages[index].sprite = sprites[0];
 			cardTexts[index].text = "";
-			Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), delegate() {
+			Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), "card_rotation_2", delegate() {
 				cards[index].GetComponent<Button>().interactable = true;
-			}, 0.0f, "card_rotation_2");
-		}, 0.0f, "card_rotation_1");
+			});
+		});
 	}
 
 	private void HideCard(int index) {
-		Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), null, 0.0f, "card_fadeout");
+		Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), "card_fadeout");
 	}
 
 	protected override void CreateQuestion() {

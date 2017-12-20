@@ -7,26 +7,25 @@ using UnityEngine.Events;
 
 public class Game_12 : GameBase {
 
-	private GameObject[] buttons = new GameObject[12];
+	protected GameObject[] buttons = new GameObject[12];
 	private Vector3[] positions = new Vector3[9];
 	private GameObject[] lines = new GameObject[4];
 	private Color[] colors = new Color[2];
 	protected Transform arrowPanel;
 	protected GameObject[] arrows = null;
-	private GameObject selectImage;
-	private GameObject[] startArrows = new GameObject[4];
-	private GameObject startButton;
+	protected GameObject selectImage;
+	protected GameObject[] startArrows = new GameObject[4];
+	
 
 	private int lineW = 6;
 
 	protected int currentArrowSize = 2;
 	protected int currentMatchSize = 1;
-	private int currentColorIndex = 0;
+	protected int currentColorIndex = 0;
 
-	private int startIndex = 0;
-	private int answerIndex = 0;
+	protected int startIndex = 0;
+	protected int answerIndex = 0;
 
-	private float rememberTime;
 
 
 	public Game_12() : base() {
@@ -34,11 +33,23 @@ public class Game_12 : GameBase {
 
 	// Use this for initialization
 	void Start () {
+		Init();
+		SetLevel(0);
+		CreateQuestion();
+		Prepare();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+	protected void Init() {
 		AudioManager audioManager = AudioManager.Instance;
 
 		for (int i = 0; i < 12; i++) {
 			int index = i;
-			buttons[i] = transform.FindChild("Button_" + (i + 1)).gameObject;
+			buttons[i] = transform.Find("Button_" + (i + 1)).gameObject;
 			buttons[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				EnableButton(false);
@@ -47,45 +58,31 @@ public class Game_12 : GameBase {
 		}
 
 		for (int i = 0; i < 9; i++) {
-			positions[i] = transform.FindChild("Image_" + (i + 1)).position;
+			positions[i] = transform.Find("Image_" + (i + 1)).position;
 		}
 
 		for (int i = 0; i < 4; i++) {
-			lines[i] = transform.FindChild("Panel_Line/Image_Line_" + (i + 1)).gameObject;
+			lines[i] = transform.Find("Panel_Line/Image_Line_" + (i + 1)).gameObject;
 		}
 
-		arrowPanel = transform.FindChild("Panel_Arrow");
+		arrowPanel = transform.Find("Panel_Arrow");
 
 		colors[0] = new Color(254/255.0f, 204/255.0f, 16/255.0f, 0); // 黃
 		colors[1] = new Color(249/255.0f, 83/255.0f, 96/255.0f, 0); // 紅
 
-		selectImage = transform.FindChild("Image_Select").gameObject;
+		selectImage = transform.Find("Image_Select").gameObject;
 		for (int i = 0; i < 4; i++) {
-			startArrows[i] = transform.FindChild("Image_Start_" + (i + 1)).gameObject;
+			startArrows[i] = transform.Find("Image_Start_" + (i + 1)).gameObject;
 		}
-
-		startButton = transform.FindChild("Button_Start").gameObject;
-		startButton.GetComponent<Button>().onClick.AddListener(delegate() {
-			audioManager.PlaySound((int)Define.Sound.Click);
-			rememberTime = (int)((Time.time - rememberTime) * 1000);
-			EnableButton(true);
-			startButton.SetActive(false);
-
-			buttons[startIndex].SetActive(false);
-			startArrows[startIndex/3].SetActive(true);
-		});
 
 		var gameData = SystemManager.Instance.GetGameData(UserInfo.Instance.Room.CurrentGameIndex);
 		levelCondition = gameData.level;
-
-		SetLevel(0);
-		CreateQuestion();
-		EnableButton(false);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	protected virtual void Prepare() {
+		EnableButton(true);
+		buttons[startIndex].SetActive(false);
+		startArrows[startIndex/3].SetActive(true);
 	}
 
 	protected virtual void CheckLevel() {
@@ -344,7 +341,7 @@ public class Game_12 : GameBase {
 			arrows[i].SetActive(true);
 			arrows[i].transform.position = pos;
 			arrows[i].transform.localEulerAngles = new Vector3(0, 0, dir < 2 ? (90 + 180 * dir) : (90 * (dir % 3)));
-			Utils.Instance.PlayAnimation(arrows[i].GetComponent<Animation>(), null, 0.0f, "card_fadein");
+			Utils.Instance.PlayAnimation(arrows[i].GetComponent<Animation>(), "card_fadein");
 		}
 
 		int index = 0;
@@ -363,12 +360,12 @@ public class Game_12 : GameBase {
 			arrows[i].SetActive(true);
 			arrows[i].transform.position = positions[otherPosIndexs[index]];
 			arrows[i].transform.localEulerAngles = new Vector3(0, 0, dir < 2 ? (90 + 180 * dir) : (90 * (dir % 3)));
-			Utils.Instance.PlayAnimation(arrows[i].GetComponent<Animation>(), null, 0.0f, "card_fadein");
+			Utils.Instance.PlayAnimation(arrows[i].GetComponent<Animation>(), "card_fadein");
 			index++;
 		}
 	}
 
-	private void Answer(int index) {
+	protected virtual void Answer(int index) {
 		reaction = ((index + 10) % 12 + 1).ToString();
 
 		if (answerIndex == index) {
@@ -390,8 +387,7 @@ public class Game_12 : GameBase {
 			}
 			CreateQuestion();
 			selectImage.SetActive(false);
-			startButton.SetActive(true);
-			rememberTime = Time.time;
+			Prepare();
 		});
 	}
 
@@ -406,14 +402,10 @@ public class Game_12 : GameBase {
 		json.AddField("question",   	question); // 起點
 		json.AddField("right",   		end); // 終點
 		json.AddField("reaction",   	reaction); // 反應
-		json.AddField("remember_ms",   	(int)rememberTime); // 記憶時間
 		return json;
 	}
 
 	public override void GameOver() {
-		if (startButton.activeSelf == false) {
-			rememberTime = 0;
-		}
 		if (reaction == "") {
 			Game.self.Next(true, false);
 		}

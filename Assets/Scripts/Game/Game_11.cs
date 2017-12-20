@@ -31,7 +31,7 @@ public class Game_11 : GameBase {
 
 		for (int i = 0; i < 16; i++) {
 			int index = i;
-			cards[i] = transform.FindChild("Panel/Button_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				Answer(index);
@@ -85,7 +85,7 @@ public class Game_11 : GameBase {
 				currentCardSize = 9;
 				currentColorSize = 2;
 				currentMaxSize = 6;
-				transform.FindChild("Panel").GetComponent<GridLayoutGroup>().constraintCount = 3;
+				transform.Find("Panel").GetComponent<GridLayoutGroup>().constraintCount = 3;
 				break;
 
 			case 1:
@@ -98,7 +98,7 @@ public class Game_11 : GameBase {
 				currentCardSize = 16;
 				currentColorSize = 2;
 				currentMaxSize = 10;
-				transform.FindChild("Panel").GetComponent<GridLayoutGroup>().constraintCount = 4;
+				transform.Find("Panel").GetComponent<GridLayoutGroup>().constraintCount = 4;
 				break;
 
 			case 3:
@@ -165,7 +165,7 @@ public class Game_11 : GameBase {
 				int cardIndex = cardIndexs[index];
 				questionColorIndexs[cardIndex] = colorIndexs[i];
 				cards[cardIndex].GetComponent<Image>().color = colors[colorIndexs[i]];
-				Utils.Instance.PlayAnimation(cards[cardIndex].GetComponent<Animation>(), null, 0.0f, "card_fadein");
+				Utils.Instance.PlayAnimation(cards[cardIndex].GetComponent<Animation>(), "card_fadein");
 				index++;
 			}
 		}

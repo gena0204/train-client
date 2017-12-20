@@ -7,7 +7,7 @@ public class SystemManager : Singleton<SystemManager> {
 
     private Dictionary<string, string> valueDict = new Dictionary<string, string>();
 
-	private GameData[] gameDatas = new GameData[14];
+	private Dictionary<int, GameData> gameDataDict = new Dictionary<int, GameData>();
 	private List<string> sloganList = new List<string>();
 
 	private System.Random rand = new System.Random();
@@ -53,17 +53,17 @@ public class SystemManager : Singleton<SystemManager> {
     // Game Data
     //----------------------------------------
 	public void SetGameData(GameData data) {
-		if (data.index < 0 || data.index >= gameDatas.Count()) {
-			return;
+		if (gameDataDict.ContainsKey(data.index)) {
+			gameDataDict.Remove(data.index);
 		}
-		gameDatas[data.index] = data;
+		gameDataDict.Add(data.index, data);
 	}
 
 	public GameData GetGameData(int index) {
-		if (index < 0 || index >= gameDatas.Count()) {
-			return new GameData();
+		if (gameDataDict.ContainsKey(index)) {
+			return gameDataDict[index];
 		}
-		return gameDatas[index];
+		return new GameData();
 	}
 
 	//----------------------------------------
@@ -88,4 +88,7 @@ public class GameData {
     public string[] colors;
     public string[] texts;
 	public string[] images;
+	public int second = 0;
+
+	public string dataJSON = "";
 }

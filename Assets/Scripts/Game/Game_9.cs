@@ -14,7 +14,7 @@ public class Game_9 : GameBase {
 
 	void OnDestroy() {
 		if (transform) {
-			var num = transform.FindChild("Button_Number");
+			var num = transform.Find("Button_Number");
 			if (num) {
 				Utils.Instance.StopAnimation(num.GetComponent<Animation>());
 			}
@@ -25,21 +25,21 @@ public class Game_9 : GameBase {
 	void Start () {
 		AudioManager audioManager = AudioManager.Instance;
 
-		var leftButton = transform.FindChild("Button_Left").GetComponent<Button>();
+		var leftButton = transform.Find("Button_Left").GetComponent<Button>();
 		leftButton.interactable = false;
 		leftButton.onClick.AddListener(delegate() {
 			audioManager.PlaySound((int)Define.Sound.Click);
 			Answer(0);
 		});
-		var rightButton = transform.FindChild("Button_Right").GetComponent<Button>();
+		var rightButton = transform.Find("Button_Right").GetComponent<Button>();
 		rightButton.interactable = false;
 		rightButton.onClick.AddListener(delegate() {
 			audioManager.PlaySound((int)Define.Sound.Click);
 			Answer(1);
 		});
 
-		var numberObj = transform.FindChild("Button_Number");
-		numberText = numberObj.FindChild("Text").GetComponent<Text>();
+		var numberObj = transform.Find("Button_Number");
+		numberText = numberObj.Find("Text").GetComponent<Text>();
 
 		var numberBtn = numberObj.GetComponent<Button>();
 		numberBtn.interactable = false;
@@ -49,12 +49,12 @@ public class Game_9 : GameBase {
 		reaction = "*";
 		Game.self.Next(true, false);
 
-		Utils.Instance.PlayAnimation(numberObj.GetComponent<Animation>(), delegate() {
+		Utils.Instance.PlayAnimation(numberObj.GetComponent<Animation>(), "card_fadein", delegate() {
 			CreateQuestion();
 			leftButton.interactable = true;
 			rightButton.interactable = true;
-			Utils.Instance.PlayAnimation(numberObj.GetComponent<Animation>(), null, 0.0f, "card_fadein");
-		}, 0.7f, "card_fadein");
+			Utils.Instance.PlayAnimation(numberObj.GetComponent<Animation>(), "card_fadein");
+		}, 0.7f);
 	}
 	
 	// Update is called once per frame

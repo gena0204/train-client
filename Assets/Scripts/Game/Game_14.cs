@@ -28,7 +28,7 @@ public class Game_14 : GameBase {
 
 		for (int i = 0; i < 9; i++) {
 			int index = i;
-			cards[i] = transform.FindChild("Panel/Button_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				cards[index].GetComponent<Button>().interactable = false;
@@ -36,7 +36,7 @@ public class Game_14 : GameBase {
 			});
 
 			cardImages[i] = cards[i].transform.GetComponent<Image>();
-			cardTexts[i] = cards[i].transform.FindChild("Text").GetComponent<Text>();
+			cardTexts[i] = cards[i].transform.Find("Text").GetComponent<Text>();
 		}
 
 		colors[0] = new Color(67/255.0f, 99/255.0f, 244/255.0f);

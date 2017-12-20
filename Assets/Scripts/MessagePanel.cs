@@ -38,8 +38,8 @@ public class MessagePanel : MonoBehaviour {
         Utils utils = Utils.Instance;
         AudioManager audioManager = AudioManager.Instance;
 
-        Transform msgImg = transform.FindChild("Panel_Message/Image_Message");
-        msgImg.FindChild("Text_Content").GetComponent<Text>().text = message;
+        Transform msgImg = transform.Find("Panel_Message/Image_Message");
+        msgImg.Find("Text_Content").GetComponent<Text>().text = message;
 
         MessageHandler handler = okHandler;
         okHandler = null;
@@ -60,11 +60,11 @@ public class MessagePanel : MonoBehaviour {
                 Exit();
             });
 
-            var okBtn = msgImg.FindChild("Button_Ok").gameObject;
+            var okBtn = msgImg.Find("Button_Ok").gameObject;
             okBtn.GetComponent<Button>().onClick.AddListener(okAction);
             okBtn.SetActive(true);
 
-            var cancelBtn = msgImg.FindChild("Button_Cancel").gameObject;
+            var cancelBtn = msgImg.Find("Button_Cancel").gameObject;
             cancelBtn.GetComponent<Button>().onClick.AddListener(cancelAction);
             cancelBtn.SetActive(true);
         } else {
@@ -72,7 +72,7 @@ public class MessagePanel : MonoBehaviour {
                 Utils.Instance.PushBackAction(cancelAction);
             });
 
-            var enterBtn = msgImg.FindChild("Button_Enter").gameObject;
+            var enterBtn = msgImg.Find("Button_Enter").gameObject;
             enterBtn.GetComponent<Button>().onClick.AddListener(okAction);
             enterBtn.SetActive(true);
         }

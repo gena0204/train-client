@@ -48,16 +48,16 @@ public class Game_3 : GameBase {
 		AudioManager audioManager = AudioManager.Instance;
 
 		for (int i = 0; i < 2; i++) {
-			cardTops[i] = transform.FindChild("Panel/Panel_Top/Button_" + (i + 1)).gameObject;
+			cardTops[i] = transform.Find("Panel/Panel_Top/Button_" + (i + 1)).gameObject;
 		}
 		for (int i = 0; i < 5; i++) {
 			int index = i;
-			cards[i] = transform.FindChild("Panel/Panel_" + (i / 3 + 1) + "/Button_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Panel_" + (i / 3 + 1) + "/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				Answer(index);
 			});
-			cardImages[i] = cards[i].transform.FindChild("Image").GetComponent<Image>();
+			cardImages[i] = cards[i].transform.Find("Image").GetComponent<Image>();
 		}
 
 		var gameData = SystemManager.Instance.GetGameData(UserInfo.Instance.Room.CurrentGameIndex);
@@ -127,7 +127,7 @@ public class Game_3 : GameBase {
 
 			case 1:
 				cardTops[1].SetActive(true);
-				transform.FindChild("Panel/Panel_2").gameObject.SetActive(true);
+				transform.Find("Panel/Panel_2").gameObject.SetActive(true);
 				currentCardSize = 5;
 				break;
 
@@ -171,7 +171,7 @@ public class Game_3 : GameBase {
 			topSpriteList.Add(spriteList[index]);
 			spriteList.RemoveAt(index);
 
-			image = cardTops[i].transform.FindChild("Image").GetComponent<Image>();
+			image = cardTops[i].transform.Find("Image").GetComponent<Image>();
 			colorInfo = topColorList[i];
 			spriteInfo = topSpriteList[i];
 			image.color = colorInfo.color;

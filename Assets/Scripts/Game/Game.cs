@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -8,14 +9,15 @@ using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour {
 
+	[SerializeField]
+    private Fading fading;
+
 	public static Game self;
 
 	public GameBase currentGame;
 	private int currentGameIndex = 0;
 
 	private AudioManager audioManager;
-
-	private Fading fading;
 
 	private Text timerText;
 	private GameObject borderFailImage;
@@ -37,6 +39,7 @@ public class Game : MonoBehaviour {
 
 	private float startTime;
 	private float pauseTime;
+	private int gameTotalTime = 120;
 	private int gameTime = 120;
 	private float gameoverTime = 1;
 
@@ -72,11 +75,11 @@ public class Game : MonoBehaviour {
 		Utils utils = Utils.Instance;
 		audioManager = AudioManager.Instance;
 
-		fading = transform.GetComponent<Fading>();
-
 		currentGameIndex = userInfo.Room.CurrentGameIndex;
 
-		gameTime = SystemManager.Instance.GetInt("game_time", gameTime);
+		gameTime = SystemManager.Instance.GetGameData(currentGameIndex).second;
+		if (gameTime == 0) gameTime = SystemManager.Instance.GetInt("game_time", gameTime);
+		gameTotalTime = gameTime;
 		gameoverTime = SystemManager.Instance.GetFloat("gameover_time", gameoverTime);
 
 		UnityAction exitAction = delegate() {
@@ -87,15 +90,16 @@ public class Game : MonoBehaviour {
 			StopCountDown();
             Exit();
 		};
-		transform.FindChild("Button_Exit").GetComponent<Button>().onClick.AddListener(exitAction);
+		transform.Find("Button_Exit").GetComponent<Button>().onClick.AddListener(exitAction);
 		utils.SetBeginBackAction(exitAction);
 
-		transform.FindChild("Text_Title").GetComponent<Text>().text = Define.gameInfo[userInfo.Room.CurrentGameIndex][0];
+		transform.Find("Text_Title").GetComponent<Text>().text =
+			Lang.Instance.getString("game_name_" + (currentGameIndex + 1));
 
-		timerText = transform.FindChild("Text_Time").GetComponent<Text>(); 
-		borderFailImage = transform.FindChild("Image_Border_Fail").gameObject;
+		timerText = transform.Find("Text_Time").GetComponent<Text>(); 
+		borderFailImage = transform.Find("Image_Border_Fail").gameObject;
 
-		timeBarRT = transform.FindChild("Image_TimeBar").GetComponent<RectTransform>();
+		timeBarRT = transform.Find("Image_TimeBar").GetComponent<RectTransform>();
 		timeBarTargetSize = new Vector2(0, timeBarRT.sizeDelta.y);
 		timeBarUnit = timeBarRT.sizeDelta.x / gameTime;
 
@@ -103,16 +107,16 @@ public class Game : MonoBehaviour {
 		//=============================================================
         // Game Over
         //=============================================================
-		gameoverPanel = transform.FindChild("Panel_Gameover").gameObject;
-		resultPanel = transform.FindChild("Panel_Result").gameObject;
+		gameoverPanel = transform.Find("Panel_Gameover").gameObject;
+		resultPanel = transform.Find("Panel_Result").gameObject;
 
-		resultTitle = resultPanel.transform.FindChild("Text_Title").GetComponent<Text>();
-		resultTexts[0] = resultPanel.transform.FindChild("Image_Right/Text_Right").GetComponent<Text>();
-		resultTexts[1] = resultPanel.transform.FindChild("Image_Wrong/Text_Wrong").GetComponent<Text>();
-		resultTexts[2] = resultPanel.transform.FindChild("Image_Percent/Text_Percent").GetComponent<Text>();
+		resultTitle = resultPanel.transform.Find("Text_Title").GetComponent<Text>();
+		resultTexts[0] = resultPanel.transform.Find("Image_Right/Text_Right").GetComponent<Text>();
+		resultTexts[1] = resultPanel.transform.Find("Image_Wrong/Text_Wrong").GetComponent<Text>();
+		resultTexts[2] = resultPanel.transform.Find("Image_Percent/Text_Percent").GetComponent<Text>();
 		resultTexts[3] = resultPanel.transform.Find("Text_Slogan").GetComponent<Text>();
 
-		percentBarRT = resultPanel.transform.FindChild("Image_Percent/Image_Bar").GetComponent<RectTransform>();
+		percentBarRT = resultPanel.transform.Find("Image_Percent/Image_Bar").GetComponent<RectTransform>();
 		percentBarTargetSize = percentBarRT.sizeDelta;
 		percentMaxW = percentBarTargetSize.x;
 
@@ -120,7 +124,7 @@ public class Game : MonoBehaviour {
 
 		if (userInfo.Room.IsChallenge) {
 			if (userInfo.Room.StageIndex >= (userInfo.Room.GameIndexs.Count-1)) {
-				Button btn = resultPanel.transform.FindChild("Button_Train_2").GetComponent<Button>();
+				Button btn = resultPanel.transform.Find("Button_Train_2").GetComponent<Button>();
 				btn.onClick.AddListener(delegate() {
 					audioManager.PlaySound((int)Define.Sound.Click);
 					HomePanel.panelIndex = 1; // 回訓練頁面
@@ -128,7 +132,7 @@ public class Game : MonoBehaviour {
 				});
 				resultButtonList.Add(btn);
 			} else {
-				Button btn = resultPanel.transform.FindChild("Button_Next").GetComponent<Button>();
+				Button btn = resultPanel.transform.Find("Button_Next").GetComponent<Button>();
 				btn.onClick.AddListener(delegate() {
 					audioManager.PlaySound((int)Define.Sound.Click);
 					userInfo.Room.StageIndex = userInfo.Room.StageIndex + 1;
@@ -137,7 +141,7 @@ public class Game : MonoBehaviour {
 				resultButtonList.Add(btn);
 			}
 		} else {
-			Button btn = resultPanel.transform.FindChild("Button_Again").GetComponent<Button>();
+			Button btn = resultPanel.transform.Find("Button_Again").GetComponent<Button>();
 			btn.onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				// utils.FadeScene(Define.SCENE_GAME, fading);
@@ -145,7 +149,7 @@ public class Game : MonoBehaviour {
 			});
 			resultButtonList.Add(btn);
 
-			btn = resultPanel.transform.FindChild("Button_Train").GetComponent<Button>();
+			btn = resultPanel.transform.Find("Button_Train").GetComponent<Button>();
 			btn.onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				HomePanel.panelIndex = 1; // 回訓練頁面
@@ -154,7 +158,7 @@ public class Game : MonoBehaviour {
 			resultButtonList.Add(btn);
 		}
 
-		SceneManager.LoadScene("Game_" + (userInfo.Room.CurrentGameIndex + 1), LoadSceneMode.Additive);
+		SceneManager.LoadScene("Game_" + (currentGameIndex + 1), LoadSceneMode.Additive);
 		StartCountDown();
 	}
 	
@@ -216,8 +220,10 @@ public class Game : MonoBehaviour {
 		questionStartTime = Time.time;
 	}
 
-	public bool Right() {
-		audioManager.PlaySound((int)Define.Sound.Right);
+	public bool Right(bool sound = true) {
+		if (sound) {
+			audioManager.PlaySound((int)Define.Sound.Right);
+		}
 
 		if (reactionCount == 0) {
 			rightCount++;
@@ -234,41 +240,53 @@ public class Game : MonoBehaviour {
 			Handheld.Vibrate();
 		#endif
 
+		borderFailImage.SetActive(true);
+		Utils.Instance.PlayAnimation(borderFailImage.GetComponent<Animation>(), "", delegate() {
+			borderFailImage.SetActive(false);
+		}, 0.5f);
+
 		if (reactionCount == 0) {
 			wrongCount++;
 		}
 		isSuccess = false;
 		reactionCount++;
-
-		borderFailImage.SetActive(true);
-		Utils.Instance.PlayAnimation(borderFailImage.GetComponent<Animation>(), delegate() {
-			borderFailImage.SetActive(false);
-		}, 0.5f);
 	}
 
-	public void Next(bool ignore = false, bool time = true) {
-		if (reactionCount == 0 && !ignore) {
+	public void SetSuccess(bool success) {
+		isSuccess = success;
+	}
+
+	public void Next(bool forceSave = false, bool reactionTime = true) {
+		if (reactionCount == 0 && !forceSave) {
 			return;
 		}
 
-		if (ignore) {
+		if (forceSave) {
 			reactionCount = 1;
 		} 
 		
-		var reactionMS = time ? (int)((Time.time - questionStartTime) * 1000) : 0;
+		var reactionMS = reactionTime ? (int)((Time.time - questionStartTime) * 1000) : 0;
 		var averageMS = 0;
 
 		switch (currentGameIndex) {
 			case 4:
 			case 5:
 			case 6:
-				if (currentGame.reaction.Length > 0) {
-					averageMS = (int)(reactionMS / currentGame.reaction.Length);
+				if (currentGame.Reaction.Length > 0) {
+					averageMS = (int)(reactionMS / currentGame.Reaction.Length);
 				}
 				break;
 			case 7:
-				if (currentGame.reaction.Length > 0) {
-					averageMS = (int)(reactionMS / currentGame.reaction.Split(',').Length);
+			case 14: // 糖果追緝令
+			case 15: // 紅豆餅
+			case 20: // 戳泡泡
+				if (currentGame.Reaction.Length > 0) {
+					averageMS = (int)(reactionMS / currentGame.Reaction.Split(',').Length);
+				}
+				break;
+			case 19: // 餅乾禮盒
+				if (currentGame.Reaction.Length > 0) {
+					averageMS = (int)(reactionMS / currentGame.Reaction.Length);
 				}
 				break;
 			default:
@@ -282,7 +300,7 @@ public class Game : MonoBehaviour {
 		json.AddField("index",   		answerJSONs.Count); // 第幾題
 		json.AddField("reaction_ms",	reactionMS); // 反應時間
 		json.AddField("average_ms",		averageMS); // 平均時間
-		json.AddField("count",   		ignore ? -1 : (isSuccess ? reactionCount : 0)); // 答題狀況
+		json.AddField("count",   		forceSave ? -1 : (isSuccess ? reactionCount : 0)); // 答題狀況
 		json.AddField("success",		isSuccess);
         answerJSONs.Add(json);
 
@@ -296,24 +314,34 @@ public class Game : MonoBehaviour {
 		audioManager.PlaySound((int)Define.Sound.End, 0);
 
 		if (userInfo.Room.IsChallenge) {
-			var indexsStr = PlayerPrefs.GetString(Define.PP_ChallengeIndexs);
-            var indexs = indexsStr.Split('-');
-			indexsStr = "";
-			for (int i = 1; i < indexs.Length; i++) {
+			var indexsStr = "";
+			int[] indexs;
+
+			// 過12點須重新計關
+			var today = DateTime.Now.ToString("dd/MM/yyyy");
+			if (PlayerPrefs.GetString(Define.PP_ChallengeLastDate) != today) {
+				int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).ToArray();
+				indexs = numbers.OrderBy(n => Guid.NewGuid()).ToArray().Take(2).ToArray();
+			} else {
+				indexs = PlayerPrefs.GetString(Define.PP_ChallengeIndexs).Split('-').Select(Int32.Parse).Skip(1).ToArray();
+			}
+
+			for (int i = 0; i < indexs.Length; i++) {
 				if (indexsStr != "") indexsStr += "-";
 				indexsStr += indexs[i];
 			}
+
 			PlayerPrefs.SetString(Define.PP_ChallengeIndexs, indexsStr);
+			PlayerPrefs.SetString(Define.PP_ChallengeLastDate, today);
 			if (indexsStr == "") {
-				var challengeFinish = PlayerPrefs.GetInt(Define.PP_ChallengeFinish);
-				PlayerPrefs.SetInt(Define.PP_ChallengeFinish, challengeFinish + 1);
+				PlayerPrefs.SetString(Define.PP_ChallengeDate, DateTime.Now.ToString("dd/MM/yyyy"));
 			}
 		}
 
 		currentGame.enabled = false;
 		StopCountDown();
 		gameoverPanel.SetActive(true);
-		Utils.Instance.PlayAnimation(gameoverPanel.GetComponent<Animation>(), delegate() {
+		Utils.Instance.PlayAnimation(gameoverPanel.GetComponent<Animation>(), "", delegate() {
 			resultPanel.SetActive(true);
 
 			// percent
@@ -327,10 +355,10 @@ public class Game : MonoBehaviour {
 			}
 		}, gameoverTime);
 
-		Utils.Instance.DelayPlayAnimation(0.5f, gameoverPanel.transform.FindChild("Text").GetComponent<Animation>(),
+		Utils.Instance.DelayPlayAnimation(0.5f, gameoverPanel.transform.Find("Text").GetComponent<Animation>(),
 			null, 0, "pop");
 
-		resultTitle.text = Define.gameInfo[userInfo.Room.CurrentGameIndex][0];
+		resultTitle.text = Lang.Instance.getString("game_name_" + (currentGameIndex + 1));
 
 		resultTexts[0].text = "" + rightCount;
 		resultTexts[1].text = "" + wrongCount;
@@ -342,10 +370,11 @@ public class Game : MonoBehaviour {
 
 		// send statistic
 		JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
-        data.AddField("token",      userInfo.Token);
+		data.AddField("token",      userInfo.Token);
         data.AddField("mode",       userInfo.Room.IsChallenge ? 1 : 0);
-		data.AddField("game_index",	userInfo.Room.CurrentGameIndex);
-        data.AddField("second",     Time.time - startTime);
+		data.AddField("game_index",	currentGameIndex);
+        data.AddField("game_time",  gameTotalTime);
+		data.AddField("second",     Time.time - startTime);
 		data.AddField("history",    answerJSONs);
 
         // LoadingPanel.Show();

@@ -1,14 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <languages>
   <English>
+    <string name="lang_1">繁體中文</string>
+    <string name="lang_2">English</string>
+
+    <string name="crash">An error has occurred. Please log in again.</string>
+
+    <string name="notification">Your last login was {0} days ago!</string>
+
+    <string name="no_network">Please check the connection</string>
+    <string name="server_timeout">Server is down</string>
+    <string name="disconnect">Disconnected from server. Shutting down the game</string>
+    <string name="timeout">Connection timed out. Please check your connection</string>
+    <string name="restart">Unable to connect to server. Please attempt to reconnect.</string>
+
+    <string name="is_exit">Are you sure you want to exit?</string>
+    <string name="is_logout">Are you sure you want to log out?</string>
+
+    <string name="privacy_title">Privacy Policy</string>
+    <string name="privacy_content">中央研究院語言學研究所對於每位使用者的隱私權絕對尊重並保護重視。遵循「個人資料保護法」之規定，在未經您的同意之下，我們絕不會將您的個人資料提供予任何與本應用服務無關之第三方。請您妥善保密自己的帳號、密碼及個人資料，不要將任何個人資料，尤其是帳號密碼提供給其他人。
+
+中央研究院語言學研究所有隨時更動應用程式隱私權政策的權限，任何隱私權政策的更動都將同步公布於本應用程式上。
+
+中央研究院語言學研究所 謹上
+</string>
+
+    <string name="input_account">Account</string>
+    <string name="input_password">Password</string>
+    <string name="input_password_len">Use at least four alphanumeric characters</string>
+    <string name="need_privacy">Please indicate that you have read and agree to the Privacy Polic</string>
+    <string name="register_success">Success</string>
+
+    <string name="enter_hi">Hello!</string>
+    <string name="train_limit">Accomplish at least one [Go!] to unlock the Playground mode.</string>
+
+    <string name="no_gamedata">No date yet.</string>
+    <string name="game_fail">Failed!! Too many mistakes. Please challenge again.</string>
+
+    <string name="education_1">Elementary School</string>
+    <string name="education_2">Junior high school</string>
+    <string name="education_3">Senior/Vocational high schools</string>
+    <string name="education_4">Junior college</string>
+    <string name="education_5">University</string>
+    <string name="education_6">Graduate school</string>
+
+    <string name="game_name_1">Direction</string>
+    <string name="game_name_2">Color Words</string>
+    <string name="game_name_3">Which are the same</string>
+    <string name="game_name_4">Catch the egg</string>
+    <string name="game_name_5">Click with order</string>
+    <string name="game_name_6">Click backwards</string>
+    <string name="game_name_7">Colorful blocks</string>
+    <string name="game_name_8">Card matching</string>
+    <string name="game_name_9">Large or small</string>
+    <string name="game_name_10">Calculating</string>
+    <string name="game_name_11">Amount matters</string>
+    <string name="game_name_12">Find your way I</string>
+    <string name="game_name_13">Find your way II</string>
+    <string name="game_name_14">Matching digits</string>
+    <string name="game_name_15">Hunt for candies</string>
+    <string name="game_name_16">Make red-bean wheel pie</string>
+    <string name="game_name_17">語意達人</string>
+    <string name="game_name_18">比對王</string>
+    <string name="game_name_19">Golden smile</string>
+    <string name="game_name_20">Cookies</string>
+    <string name="game_name_21">戳泡泡</string>
+    <string name="game_name_22">成語偵探</string>
+
+    <string name="game_help_1_1">Blue: slide along with the arrow direction</string>
+    <string name="game_help_1_2">Red: slide opposite to the arrow direction</string>
+    <string name="game_help_2_1">Click on the block which color and text are not matching</string>
+    <string name="game_help_3_1">Click on the same images</string>
+    <string name="game_help_3_2">If there is no cards are the same, click on the cards that different from both shape and color</string>
+    <string name="game_help_4_1">Click to catch the golden egg with the basket.</string>
+    <string name="game_help_4_2">Click to to avoid rocks from the basket.</string>
+    <string name="game_help_5_1">Memorize and click with the order candies appears</string>
+    <string name="game_help_6_1">Memorize the order candies appears and click backwards</string>
+    <string name="game_help_7_1">Memorize block positions</string>
+    <string name="game_help_7_2">Click on the positions by color orders</string>
+    <string name="game_help_8_1">Memorize card positions</string>
+    <string name="game_help_8_2">Flip the matching cards</string>
+    <string name="game_help_9_1">Click on right if the number is larger than previous one</string>
+    <string name="game_help_9_2">Click on left if the number is smaller than previous one</string>
+    <string name="game_help_10_1">Click on the correct mathematical symbol to enable equations</string>
+    <string name="game_help_11_1">Choose the color with most amounts</string>
+    <string name="game_help_12_1">From the starting point and following arrow directions to find the path destination</string>
+    <string name="game_help_13_1">Memorize arrow positions and directioins</string>
+    <string name="game_help_13_2">Follow the disappearing arrow directions to select the path destination</string>
+    <string name="game_help_14_1">Click on the same digits.</string>
+    <string name="game_help_15_1">Memorize the first-appear candy</string>
+    <string name="game_help_15_2">Waiting for other candies</string>
+    <string name="game_help_15_3">Choose the first-appear candy after moving around</string>
+    <string name="game_help_16_1">Click on the baking pan positions to make red-bean wheel pie</string>
+    <string name="game_help_17_1">判斷兩個詞的意義相似度</string>
+    <string name="game_help_18_1">判段文字敘述和\n圖片是否相符</string>
+    <string name="game_help_19_1">Determine the open direction for the item in the middle</string>
+    <string name="game_help_20_1">Select cookie's color and memorize the shape</string>
+    <string name="game_help_20_2">Click on the shape did not appear before</string>
+    <string name="game_help_21_1">選出適合的數量詞</string>
+    <string name="game_help_21_2">選出適合的字詞</string>
+    <string name="game_help_22_1">根據解釋選出正確的成語</string>
+    <string name="game_help_22_2">點擊「提示」顯示成語1個字\n可使用2次提示</string>
   </English>
 
   <Chinese>
+    <string name="lang_1">繁體中文</string>
+    <string name="lang_2">English</string>
+
     <string name="crash">遊戲發生錯誤, 請重新進入</string>
 
     <string name="notification">您已經超過{0}天沒有進行腦力訓練囉!</string>
     
-    <string name="updating">版本更新中...</string>
     <string name="no_network">請檢查網路連線</string>
     <string name="server_timeout">目前伺服器關閉</string>
     <string name="disconnect">伺服器斷線, 即將離開遊戲</string>
@@ -30,19 +132,12 @@
     <string name="input_password">請輸入密碼</string>
     <string name="input_password_len">密碼長度須4個以上</string>
     <string name="need_privacy">請同意隱私權保護政策</string>
-    <string name="input_age">請輸入年齡</string>
     <string name="register_success">註冊成功</string>
 
     <string name="enter_hi">您好</string>
     <string name="train_limit">每日要完成1次[挑戰Go!]，才可解鎖訓練模式。</string>
 
-    <string name="input_roomid">請輸入配對號碼</string>
-    <string name="no_roomid">查無此配對號碼</string>
-    <string name="no_room">目前尚無對手</string>
-    <string name="room_wait">等待隨機玩家加入...</string>
-    <string name="room_user_exit">對手離開</string>
-    <string name="is_game_exit">確定離開對戰?</string>
-
+    <string name="no_gamedata">尚無題庫</string>
     <string name="game_fail">失敗!!你已答錯太多題目，請重新挑戰</string>
 
     <string name="education_1">國小</string>
@@ -51,5 +146,63 @@
     <string name="education_4">專科</string>
     <string name="education_5">大學</string>
     <string name="education_6">研究所以上</string>
+
+    <string name="game_name_1">方向感</string>
+    <string name="game_name_2">文字陷阱</string>
+    <string name="game_name_3">圖卡分類</string>
+    <string name="game_name_4">接金蛋</string>
+    <string name="game_name_5">順向點擊</string>
+    <string name="game_name_6">逆向點擊</string>
+    <string name="game_name_7">彩色方塊</string>
+    <string name="game_name_8">記憶拼圖</string>
+    <string name="game_name_9">比大小</string>
+    <string name="game_name_10">用盡心計</string>
+    <string name="game_name_11">絕對量感</string>
+    <string name="game_name_12">路徑終點I</string>
+    <string name="game_name_13">路徑終點II</string>
+    <string name="game_name_14">極速配對</string>
+    <string name="game_name_15">糖果追緝令</string>
+    <string name="game_name_16">紅豆餅</string>
+    <string name="game_name_17">語意達人</string>
+    <string name="game_name_18">比對王</string>
+    <string name="game_name_19">黃金開口笑</string>
+    <string name="game_name_20">餅乾禮盒</string>
+    <string name="game_name_21">戳泡泡</string>
+    <string name="game_name_22">成語偵探</string>
+
+    <string name="game_help_1_1">藍色：順著箭頭方向滑動</string>
+    <string name="game_help_1_2">紅色：反箭頭方向滑動</string>
+    <string name="game_help_2_1">點擊顏色與文字不符的方格</string>
+    <string name="game_help_3_1">點擊相同的圖卡</string>
+    <string name="game_help_3_2">沒有相同圖卡時，\n點擊形狀與顏色皆不同的圖卡</string>
+    <string name="game_help_4_1">點擊位置，讓籃子接住金蛋</string>
+    <string name="game_help_4_2">點擊位置，讓籃子避開石頭</string>
+    <string name="game_help_5_1">記住糖果出現的順序，依序點擊</string>
+    <string name="game_help_6_1">記住糖果出現的順序，\n以相反順序點擊</string>
+    <string name="game_help_7_1">記住各色塊的位置</string>
+    <string name="game_help_7_2">依顏色順序點擊位置</string>
+    <string name="game_help_8_1">記住圖卡的位置</string>
+    <string name="game_help_8_2">翻出一樣的配對</string>
+    <string name="game_help_9_1">比前一數字大，點右側</string>
+    <string name="game_help_9_2">比前一數字小，點左側</string>
+    <string name="game_help_10_1">點擊正確的運算符號，使等式成立</string>
+    <string name="game_help_11_1">點擊數量最多的顏色</string>
+    <string name="game_help_12_1">觀察起點與箭頭方向，\n選擇路徑終點</string>
+    <string name="game_help_13_1">記住箭頭的位置與方向</string>
+    <string name="game_help_13_2">起點出現後根據消失的箭頭方向，選擇路徑終點</string>
+    <string name="game_help_14_1">點擊相同的數字</string>
+    <string name="game_help_15_1">記憶最初出現的糖果</string>
+    <string name="game_help_15_2">待其他糖果出現</string>
+    <string name="game_help_15_3">糖果移動後，選擇最初\n出現的糖果</string>
+    <string name="game_help_16_1">點擊右方烤盤位置\n烤出完整紅豆餅</string>
+    <string name="game_help_17_1">判斷兩個詞的意義相似度</string>
+    <string name="game_help_18_1">判段文字敘述和\n圖片是否相符</string>
+    <string name="game_help_19_1">判斷正中央圖案\n的開口方向</string>
+    <string name="game_help_20_1">選擇餅乾顏色\n並記住形狀</string>
+    <string name="game_help_20_2">點擊沒有出現過的\n餅乾形狀</string>
+    <string name="game_help_21_1">選出適合的數量詞</string>
+    <string name="game_help_21_2">選出適合的字詞</string>
+    <string name="game_help_22_1">根據解釋選出正確的成語</string>
+    <string name="game_help_22_2">點擊「提示」顯示成語1個字\n可使用2次提示</string>
   </Chinese>
 </languages>

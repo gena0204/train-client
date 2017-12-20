@@ -44,13 +44,13 @@ public class Game_2 : GameBase {
 
 		for (int i = 0; i < 4; i++) {
 			int index = i;
-			cards[i] = transform.FindChild("Panel/Panel_" + (i / 2 + 1) + "/Button_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Panel_" + (i / 2 + 1) + "/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				audioManager.PlaySound((int)Define.Sound.Click);
 				Answer(index);
 			});
-			cardTexts[i] = cards[i].transform.FindChild("Text").GetComponent<Text>();
-			cardImages[i] = cards[i].transform.FindChild("Image").GetComponent<Image>();
+			cardTexts[i] = cards[i].transform.Find("Text").GetComponent<Text>();
+			cardImages[i] = cards[i].transform.Find("Image").GetComponent<Image>();
 		}
 
 		var gameData = SystemManager.Instance.GetGameData(UserInfo.Instance.Room.CurrentGameIndex);
@@ -58,15 +58,24 @@ public class Game_2 : GameBase {
 		var colors = gameData.colors.Length >= 5 ? gameData.colors : new string[] {
 			"#F46464", "#2F98D6", "#E8DF59", "#31B478", "#2F2F2F"
 		};
-		var texts = gameData.texts.Length >= 5 ? gameData.texts : new string[] {
-			"紅", "藍", "黃", "綠", "黑"
+		var texts = gameData.texts.Length >= 10 ? gameData.texts : new string[] {
+			"紅", "藍", "黃", "綠", "黑",
+			"RED", "BLUE", "YELLOW", "GREEN", "BLACK",
 		};
+
+		var lang = PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese" ? 0 : 5;
 		
-		colorInfos.Add(new ColorInfo(texts[0], colors[0], "R", "R"));
-		colorInfos.Add(new ColorInfo(texts[1], colors[1], "B", "B"));
-		colorInfos.Add(new ColorInfo(texts[2], colors[2], "Y", "Y"));
-		colorInfos.Add(new ColorInfo(texts[3], colors[3], "G", "G"));
-		colorInfos.Add(new ColorInfo(texts[4], colors[4], "K", "K"));
+		colorInfos.Add(new ColorInfo(texts[lang], colors[0], "R", "R"));
+		colorInfos.Add(new ColorInfo(texts[lang+1], colors[1], "B", "B"));
+		colorInfos.Add(new ColorInfo(texts[lang+2], colors[2], "Y", "Y"));
+		colorInfos.Add(new ColorInfo(texts[lang+3], colors[3], "G", "G"));
+		colorInfos.Add(new ColorInfo(texts[lang+4], colors[4], "K", "K"));
+
+		if (lang == 5) {
+			foreach (var text in cardTexts) {
+				text.fontSize = 60;
+			}
+		}
 
 		levelCondition = gameData.level;
 		
@@ -94,7 +103,7 @@ public class Game_2 : GameBase {
 				break;
 
 			case 1:
-				transform.FindChild("Panel/Panel_2").gameObject.SetActive(true);
+				transform.Find("Panel/Panel_2").gameObject.SetActive(true);
 				currentCardSize = 3;
 				break;
 

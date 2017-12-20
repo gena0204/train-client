@@ -12,7 +12,11 @@ public class GameBase : MonoBehaviour {
 	protected int levelValue = 0;
 	protected string type = ""; // 類型 
 	protected string question = ""; // 題目
-	public string reaction = ""; // 反應 
+	protected string reaction = ""; // 反應 
+
+	public string Reaction {
+		get { return reaction; }
+	}
 
 	public GameBase() {
 		Game.SetGame(this);
@@ -30,7 +34,7 @@ public class GameBase : MonoBehaviour {
 		Game.self.StartQuestion();
 	}
 
-	protected void SaveQuestion() {
+	protected virtual void SaveQuestion() {
 		Game.self.Next();
 	}
 

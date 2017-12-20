@@ -33,10 +33,10 @@ public class Game_1 : GameBase {
 	void Start () {
 		colors[0] = new Color(70/255.0f, 103/255.0f, 255/255.0f);
 		colors[1] = new Color(241/255.0f, 90/255.0f, 41/255.0f);
-		directionImages[0] = transform.FindChild("Image_Up").GetComponent<Image>();
-		directionImages[1] = transform.FindChild("Image_Down").GetComponent<Image>();
-		directionImages[2] = transform.FindChild("Image_Left").GetComponent<Image>();
-		directionImages[3] = transform.FindChild("Image_Right").GetComponent<Image>();
+		directionImages[0] = transform.Find("Image_Up").GetComponent<Image>();
+		directionImages[1] = transform.Find("Image_Down").GetComponent<Image>();
+		directionImages[2] = transform.Find("Image_Left").GetComponent<Image>();
+		directionImages[3] = transform.Find("Image_Right").GetComponent<Image>();
 
 		CreateQuestion();
 	}
@@ -171,7 +171,7 @@ public class Game_1 : GameBase {
 		directionImages[currentDirection].gameObject.SetActive(true);
 		directionImages[currentDirection].color = colors[currentColor];
 
-		Utils.Instance.PlayAnimation(directionImages[currentDirection].GetComponent<Animation>(), null, 0.0f, "card_fadein");
+		Utils.Instance.PlayAnimation(directionImages[currentDirection].GetComponent<Animation>(), "card_fadein");
 
 		type = typeCodes[currentColor];
 		question = questionCodes[currentDirection];

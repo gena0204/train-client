@@ -37,19 +37,19 @@ public class Game_7 : GameBase {
 
 		for (int i = 0; i < 4; i++) {
 			int index = i;
-			cardTops[i] = transform.FindChild("Panel_Top/Image_" + (i + 1)).gameObject;
-			cards[i] = transform.FindChild("Panel/Button_" + (i + 1)).gameObject;
+			cardTops[i] = transform.Find("Panel_Top/Image_" + (i + 1)).gameObject;
+			cards[i] = transform.Find("Panel/Button_" + (i + 1)).gameObject;
 			cards[i].GetComponent<Button>().onClick.AddListener(delegate() {
 				if (!isStart) return;
 				audioManager.PlaySound((int)Define.Sound.Click);
 				cards[index].GetComponent<Button>().interactable = false;
 				cards[index].GetComponent<Image>().color = colors[questionIndexs[index]];
-				Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), null, 0.0f, "card_fadein");
+				Utils.Instance.PlayAnimation(cards[index].GetComponent<Animation>(), "card_fadein");
 				Answer(index);
 			});
 		}
 
-		startButton = transform.FindChild("Button_Start").gameObject;
+		startButton = transform.Find("Button_Start").gameObject;
 		startButton.GetComponent<Button>().onClick.AddListener(delegate() {
 			audioManager.PlaySound((int)Define.Sound.Click);
 			rememberTime = (int)((Time.time - rememberTime) * 1000);
@@ -105,7 +105,7 @@ public class Game_7 : GameBase {
 			case 2:
 				currentCardSize = 4;
 				currentColorSize = 3;
-				transform.FindChild("Panel").GetComponent<GridLayoutGroup>().constraintCount = 2;
+				transform.Find("Panel").GetComponent<GridLayoutGroup>().constraintCount = 2;
 				break;
 
 			case 3:
@@ -182,7 +182,7 @@ public class Game_7 : GameBase {
 			card.GetComponent<Button>().interactable = true;
 			card.GetComponent<Image>().color = colors[questionIndexs[i]];
 
-			Utils.Instance.PlayAnimation(card.GetComponent<Animation>(), null, 0.0f, "card_fadein");
+			Utils.Instance.PlayAnimation(card.GetComponent<Animation>(), "card_fadein");
 
 			rememberCodes += colorCodes[questionIndexs[i]];
 		}
@@ -222,7 +222,7 @@ public class Game_7 : GameBase {
 		reaction += index + 1;
 
 		if (answerIndexs[count] == questionIndexs[index]) {
-			Utils.Instance.PlayAnimation(cardTops[count].GetComponent<Animation>(), null, 0.0f, "fadeout");
+			Utils.Instance.PlayAnimation(cardTops[count].GetComponent<Animation>(), "fadeout");
 
 			count++;
 			if (count == currentCardSize) {

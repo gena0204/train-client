@@ -1,0 +1,67 @@
+{
+    "UIMessage.BtnOk": "OK",
+    "UIMessage.BtnCancel": "Cancel",
+
+    "UILogin.TextTitle": "Log in",
+    "UILogin.InputAccount": "Account",
+    "UILogin.InputPassword": "Password",
+    "UILogin.BtnLogin": "Log in",
+    "UILogin.BtnRegister": "Sing up to join in",
+
+    "UIRegister.TextTitle": "Sign up",
+    "UIRegister.TextNew": "Create new account",
+    "UIRegister.TextPassword": "Password",
+    "UIRegister.TextPassword2": "(Use at least four alphanumeric characters)",
+    "UIRegister.BtnPrivacy": "Privacy Protection Policy",
+    "UIRegister.TextPrivacy": "Privacy Policy",
+    "UIRegister.BtnNext": "Next",
+    "UIRegister.TextSex": "Gender",
+    "UIRegister.TextSex1": " Male",
+    "UIRegister.TextSex2": " Female",
+    "UIRegister.TextSex3": " Skip",
+    "UIRegister.TextBirth": "Year of birth",
+    "UIRegister.TextEducation": "Education",
+    "UIRegister.BtnFinish": "Done",
+
+    "UIHome.TextTitle": "每日腦點心",
+    "UIHome.BtnPlay": "GO!",
+    "UIHome.TextExit": "Exit the game?",
+
+    "UITrain.TextTitle": "Playground",
+    "UITrain.TextGroup1": "Attention",
+    "UITrain.TextGroup2": "Memory",
+    "UITrain.TextGroup3": "Math",
+    "UITrain.TextGroup4": "Executive Function",
+    "UITrain.TextGroup5": "Language",
+
+    "UIRank.TextTitle": "My scores",
+    "UIRank.TextRank": "Ranking",
+
+    "UIMenu.TextTitle": "Options",
+    "UIMenu.BtnNews": "News",
+    "UIMenu.TextVersion": "Version",
+    "UIMenu.TextContact": "Contact us",
+    "UIMenu.BtnLink1": "Human Memory Laboratory",
+    "UIMenu.BtnLink2": "Brain and Language Laboratory",
+    "UIMenu.BtnLink3": "Eye movement and Reading Laboratory",
+    "UIMenu.BtnLink4": "Visual Cognition Laboratory",
+    "UIMenu.TextSetting": "Settings",
+    "UIMenu.BtnMusic": "Music",
+    "UIMenu.BtnAudio": "Sound effects",
+    "UIMenu.BtnLanguage": "Languages",
+    "UIMenu.BtnLogout": "Log out",
+
+    "UIGameIntro.BtnStart": "Start",
+
+    "UIGame.BtnRemember": "Memorized",
+
+    "UIGameOver.TextTitle": "Finished!",
+
+    "UIGameResult.TextTitle": "Results",
+    "UIGameResult.TextPercent": "Correctness",
+    "UIGameResult.TextRight": "Correct",
+    "UIGameResult.TextWrong": "Wrong",
+    "UIGameResult.BtnNext": "Next",
+    "UIGameResult.BtnTrain": "Playground",
+    "UIGameResult.BtnAgain": "Play again",
+}

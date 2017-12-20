@@ -1,0 +1,67 @@
+{
+    "UIMessage.BtnOk": "確認",
+    "UIMessage.BtnCancel": "取消",
+
+    "UILogin.TextTitle": "登入",
+    "UILogin.InputAccount": "請輸入帳號",
+    "UILogin.InputPassword": "請輸入密碼",
+    "UILogin.BtnLogin": "登入",
+    "UILogin.BtnRegister": "註冊立即加入",
+
+    "UIRegister.TextTitle": "註冊",
+    "UIRegister.TextNew": "建立新帳號",
+    "UIRegister.TextPassword": "設定密碼",
+    "UIRegister.TextPassword2": "(請使用英數半形，長度4個以上)",
+    "UIRegister.BtnPrivacy": "隱私權保護政策",
+    "UIRegister.TextPrivacy": "隱私權政策",
+    "UIRegister.BtnNext": "下一步",
+    "UIRegister.TextSex": "您的性別",
+    "UIRegister.TextSex1": " 男生",
+    "UIRegister.TextSex2": " 女生",
+    "UIRegister.TextSex3": " 略過",
+    "UIRegister.TextBirth": "您的出生年",
+    "UIRegister.TextEducation": "您的教育程度",
+    "UIRegister.BtnFinish": "完成",
+
+    "UIHome.TextTitle": "每日腦點心",
+    "UIHome.BtnPlay": "挑戰GO!",
+    "UIHome.TextExit": "離開遊戲?",
+
+    "UITrain.TextTitle": "遊戲訓練",
+    "UITrain.TextGroup1": "注意力",
+    "UITrain.TextGroup2": "記憶",
+    "UITrain.TextGroup3": "數學",
+    "UITrain.TextGroup4": "執行功能",
+    "UITrain.TextGroup5": "語言",
+
+    "UIRank.TextTitle": "我的成績",
+    "UIRank.TextRank": "排行",
+
+    "UIMenu.TextTitle": "設定選單",
+    "UIMenu.BtnNews": "最新消息",
+    "UIMenu.TextVersion": "遊戲版本",
+    "UIMenu.TextContact": "聯絡我們",
+    "UIMenu.BtnLink1": "人類記憶實驗室",
+    "UIMenu.BtnLink2": "大腦與語言實驗室",
+    "UIMenu.BtnLink3": "眼動與閱讀實驗室",
+    "UIMenu.BtnLink4": "視覺認知實驗室",
+    "UIMenu.TextSetting": "設定",
+    "UIMenu.BtnMusic": "背景音樂",
+    "UIMenu.BtnAudio": "音效",
+    "UIMenu.BtnLanguage": "語言",
+    "UIMenu.BtnLogout": "帳號登出",
+
+    "UIGameIntro.BtnStart": "開始",
+
+    "UIGame.BtnRemember": "記住了",
+
+    "UIGameOver.TextTitle": "遊戲結束!",
+    
+    "UIGameResult.TextTitle": "成績結算",
+    "UIGameResult.TextPercent": "正確率",
+    "UIGameResult.TextRight": "答對題數",
+    "UIGameResult.TextWrong": "答錯題數",
+    "UIGameResult.BtnNext": "下個遊戲",
+    "UIGameResult.BtnTrain": "遊戲訓練",
+    "UIGameResult.BtnAgain": "再玩一次",
+}
