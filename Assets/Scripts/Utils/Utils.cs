@@ -19,7 +19,7 @@ public class Utils : Singleton<Utils> {
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         QualitySettings.masterTextureLimit = 0;
-        // Application.targetFrameRate = 45;
+        Application.targetFrameRate = 60;
 
         // if (PlayerPrefs.GetString("client_version") != Define.VERSION_CLIENT) {
         //     PlayerPrefs.DeleteAll();
