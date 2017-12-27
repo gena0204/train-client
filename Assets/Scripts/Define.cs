@@ -6,11 +6,13 @@ using System.Collections;
 public class Define {
 
 #if _DEBUG
-    private const string HOST                = "jack24.ddns.net";
-    private const string HOST_IPV6           = "jack24.ddns.net";
+    public const bool DEBUG                 = true;
+    private const string HOST               = "jack24.ddns.net";
+    private const string HOST_IPV6          = "jack24.ddns.net";
 #else
-    private const string HOST                = "140.109.150.188";
-    private const string HOST_IPV6           = "[2001:b011:4800:b39:7c09:d2ac:2436:87cc]";
+    public const bool DEBUG                 = false;
+    private const string HOST               = "140.109.150.188";
+    private const string HOST_IPV6          = "[2001:b011:4800:b39:7c09:d2ac:2436:87cc]";
 #endif
 
     public const string RESTFUL_URL_IPV4    = "http://" + HOST + ":8090/";  

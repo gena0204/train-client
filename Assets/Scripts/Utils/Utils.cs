@@ -46,9 +46,9 @@ public class Utils : Singleton<Utils> {
     // Use this for initialization
     void Start() {
         Application.logMessageReceived += HandleLog;
-        #if _DEBUG
+        if (Define.DEBUG) {
             FPS.Instance.Init();
-        #endif
+        }
     }
 
     // Update is called once per frame

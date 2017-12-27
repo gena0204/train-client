@@ -205,11 +205,12 @@ public class Game_18 : GameBase {
 		var obj2 = objects[scaleIndexs2[1]][shapeIndexs[1]];
 		
 		if (answerIndex == 1) {
-			if (errorTypeIndex == 1) { // 顏色錯誤
-				int colorIndex = colorIndexs[0];
-				colorIndexs[0] = colorIndexs[1];
-				colorIndexs[1] = colorIndex;
-			} else { // 關係錯誤
+			// 顏色對調
+			int colorIndex = colorIndexs[0];
+			colorIndexs[0] = colorIndexs[1];
+			colorIndexs[1] = colorIndex;
+
+			if (errorTypeIndex == 0) { // 關係錯誤
 				int shapeIndex = shapeIndexs[0];
 				shapeIndexs[0] = shapeIndexs[1];
 				shapeIndexs[1] = shapeIndex;
