@@ -18,7 +18,13 @@ public class GameIntro : MonoBehaviour {
 		var gameIndex = UserInfo.Instance.Room.CurrentGameIndex;
 		var gameTag = gameIndex + 1;
 		var helpSize = Define.gameInfo[gameIndex];
-		var langTag = (gameIndex != 1 || PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese") ? "" : "_en";
+		var langTag = "";
+
+		if (PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "English") {
+			if (gameIndex == 1 || gameIndex == 16 || gameIndex == 17) {
+				langTag = "_en";
+			}
+		}
 
 		UnityAction backAction = delegate() {
 			audioManager.PlaySound((int)Define.Sound.Click);

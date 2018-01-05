@@ -43,16 +43,18 @@ public class Game_17 : GameBase {
 			});
 		}
 
+		var lang = PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese" ? 0 : 1;
+
 		var gameData = SystemManager.Instance.GetGameData(UserInfo.Instance.Room.CurrentGameIndex);
 		var words = new JSONObject(gameData.dataJSON);
-		if (words == null || !words.IsArray || words.list.Count == 0) {
+		if (words == null || !words.IsArray || words.list.Count <= lang) {
 			MessagePanel.ShowMessage(Lang.Instance.getString("no_gamedata"), delegate() {
                 HomePanel.panelIndex = 1; // 回訓練頁面
 				Game.self.Exit();
             });
 			return;
 		}
-		foreach (var w in words.list) {
+		foreach (var w in words.list[lang].list) {
 			var list = new List<string>[2];
 			for (int i = 0; i < 2; i++) {
 				list[i] = new List<string>();

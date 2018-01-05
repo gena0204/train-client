@@ -24,8 +24,12 @@ public class Game_18 : GameBase {
 	private string positionText = "";
 	private int[] positionIndex = new int[2];
 	private int answerIndex = 0;
+
+	private string[] questionTemplates;
+	private string[] sizeDescs;
+	private string[] dirDescs;
 	
-	private string[] shapeTexts = new string[] {"圓形", "方形", "菱形", "梯形"}; // 形狀  (圓形C, 方形S, 菱形D, 梯形T) 
+	private string[] shapeTexts; // 形狀  (圓形C, 方形S, 菱形D, 梯形T) 
 	private string[] colorTexts = new string[] {"", "", "", ""}; // 顏色  (紅r, 黃y, 藍b, 綠g)
 
 	private string[] typeCodes = new string[] {"S", "P"}; // (比大小Ｓ/ 比位置Ｐ)
@@ -55,6 +59,18 @@ public class Game_18 : GameBase {
 
 		// scales[0] = Vector3.one;
 		// scales[1] = new Vector3(0.6f, 0.6f, 1.0f);
+
+		if (PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese") {
+			questionText.fontSize = 90;
+			questionTemplates = new string[] {"{0}{1}比{2}{3}{4}{5}", "{0}{1}在{2}{3}{4}的{5}方"};
+			sizeDescs = new string[] {"大", "小"};
+			dirDescs = new string[] {"上", "下", "左", "右"};
+		} else {
+			questionText.fontSize = 65;
+			questionTemplates = new string[] {"{0}{1} is {2}{5} than {3}{4}", "{0}{1} is {2}{5} {3}{4}"};
+			sizeDescs = new string[] {"larger", "smaller"};
+			dirDescs = new string[] {"above", "below", "to the left of", "to the right of"};
+		}
 
 		var gameData = SystemManager.Instance.GetGameData(UserInfo.Instance.Room.CurrentGameIndex);
 		levelCondition = gameData.level;
@@ -128,9 +144,25 @@ public class Game_18 : GameBase {
 		level = l;
 
 		switch (level) {
+			case 0:
+				// 形狀  (圓形C, 方形S, 菱形D, 梯形T) 
+				shapeTexts = new string[] {
+					Lang.Instance.getString("game_18_shape_1"),
+					Lang.Instance.getString("game_18_shape_2"),
+					Lang.Instance.getString("game_18_shape_3"),
+					Lang.Instance.getString("game_18_shape_4"),
+				}; 
+				break;
+
 			case 1:
 				nextLine = "\n";
-				colorTexts = new string[] {"紅色", "黃色", "藍色", "綠色"}; // 顏色  (紅r, 黃y, 藍b, 綠g)
+				// 顏色  (紅r, 黃y, 藍b, 綠g)
+				colorTexts = new string[] {
+					Lang.Instance.getString("game_18_color_1"),
+					Lang.Instance.getString("game_18_color_2"),
+					Lang.Instance.getString("game_18_color_3"),
+					Lang.Instance.getString("game_18_color_4"),
+				}; 
 				break;
 		}
 	}
@@ -219,7 +251,7 @@ public class Game_18 : GameBase {
 			errorTypeIndex = 2;
 		}
 
-		var text = typeIndex == 0 ? "{0}{1}比{2}{3}{4}{5}" : "{0}{1}在{2}{3}{4}的{5}方";
+		var text = questionTemplates[typeIndex];
 		text = string.Format(text,
 			colorTexts[colorIndexs[0]],
 			shapeTexts[shapeIndexs[0]],
@@ -227,10 +259,10 @@ public class Game_18 : GameBase {
 			colorTexts[colorIndexs[1]],
 			shapeTexts[shapeIndexs[1]],
 			typeIndex == 0 ? 
-				(scaleIndexs2[0] > scaleIndexs2[1] ? "大" : "小") :
+				(scaleIndexs2[0] > scaleIndexs2[1] ? sizeDescs[0] : sizeDescs[1]) :
 				(dir == 0 ?
-					(obj1.transform.position.y > obj2.transform.position.y ? "上" : "下") :
-					(obj1.transform.position.x < obj2.transform.position.x ? "左" : "右"))
+					(obj1.transform.position.y > obj2.transform.position.y ? dirDescs[0] : dirDescs[1]) :
+					(obj1.transform.position.x < obj2.transform.position.x ? dirDescs[2] : dirDescs[3]))
 		);
 
 		questionText.text = text;

@@ -54,6 +54,9 @@
     "UIGameIntro.BtnStart": "Start",
 
     "UIGame.BtnRemember": "Memorized",
+    "UIGame.BtnGame17_1": "similar",
+    "UIGame.BtnGame17_2": "unrelated",
+    "UIGame.BtnGame17_3": "opposite",
 
     "UIGameOver.TextTitle": "Finished!",
 

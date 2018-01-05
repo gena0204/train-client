@@ -60,8 +60,8 @@
     <string name="game_name_14">Matching digits</string>
     <string name="game_name_15">Hunt for candies</string>
     <string name="game_name_16">Make red-bean wheel pie</string>
-    <string name="game_name_17">語意達人</string>
-    <string name="game_name_18">比對王</string>
+    <string name="game_name_17">Meaningful words</string>
+    <string name="game_name_18">Quick-eyed</string>
     <string name="game_name_19">Golden smile</string>
     <string name="game_name_20">Cookies</string>
     <string name="game_name_21">戳泡泡</string>
@@ -92,8 +92,8 @@
     <string name="game_help_15_2">Waiting for other candies</string>
     <string name="game_help_15_3">Choose the first-appear candy after moving around</string>
     <string name="game_help_16_1">Click on the baking pan positions to make red-bean wheel pie</string>
-    <string name="game_help_17_1">判斷兩個詞的意義相似度</string>
-    <string name="game_help_18_1">判段文字敘述和\n圖片是否相符</string>
+    <string name="game_help_17_1">Click the button to determine the relationship between two words.</string>
+    <string name="game_help_18_1">Click the button to determine if the description and picture are matched.</string>
     <string name="game_help_19_1">Determine the open direction for the item in the middle</string>
     <string name="game_help_20_1">Select cookie's color and memorize the shape</string>
     <string name="game_help_20_2">Click on the shape did not appear before</string>
@@ -101,6 +101,15 @@
     <string name="game_help_21_2">選出適合的字詞</string>
     <string name="game_help_22_1">根據解釋選出正確的成語</string>
     <string name="game_help_22_2">點擊「提示」顯示成語1個字\n可使用2次提示</string>
+
+    <string name="game_18_shape_1">circle</string>
+    <string name="game_18_shape_2">square</string>
+    <string name="game_18_shape_3">diamond</string>
+    <string name="game_18_shape_4">trapezoid</string>
+    <string name="game_18_color_1">red </string>
+    <string name="game_18_color_2">yellow </string>
+    <string name="game_18_color_3">blue </string>
+    <string name="game_18_color_4">green </string>
   </English>
 
   <Chinese>
@@ -204,5 +213,14 @@
     <string name="game_help_21_2">選出適合的字詞</string>
     <string name="game_help_22_1">根據解釋選出正確的成語</string>
     <string name="game_help_22_2">點擊「提示」顯示成語1個字\n可使用2次提示</string>
+
+    <string name="game_18_shape_1">圓形</string>
+    <string name="game_18_shape_2">方形</string>
+    <string name="game_18_shape_3">菱形</string>
+    <string name="game_18_shape_4">梯形</string>
+    <string name="game_18_color_1">紅色</string>
+    <string name="game_18_color_2">黃色</string>
+    <string name="game_18_color_3">藍色</string>
+    <string name="game_18_color_4">綠色</string>
   </Chinese>
 </languages>

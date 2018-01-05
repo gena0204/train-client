@@ -54,6 +54,9 @@
     "UIGameIntro.BtnStart": "開始",
 
     "UIGame.BtnRemember": "記住了",
+    "UIGame.BtnGame17_1": "相 似",
+    "UIGame.BtnGame17_2": "無 關",
+    "UIGame.BtnGame17_3": "相 反",
 
     "UIGameOver.TextTitle": "遊戲結束!",
     

@@ -407,10 +407,16 @@ public class HomePanel : MonoBehaviour {
         //------------------------
         LanguageText[] langTexts = Resources.FindObjectsOfTypeAll(typeof(LanguageText)) as LanguageText[];
         var langDropdown = menuPanel.transform.Find(menuContent + "/Panel_Language/Dropdown").GetComponent<Dropdown>();
-        var trainPanel5 = trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5").gameObject;
+        // var trainPanel5 = trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5").gameObject;
         var trainImg2 = trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_1/Viewport/Content/Button_2").GetComponent<Image>();
+        var trainImg17 = trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5/Viewport/Content/Button_17").GetComponent<Image>();
         var langList = new List<string>() {lang.getString("lang_1"), lang.getString("lang_2")};
         var langs = new List<string>() {"Chinese", "English"};
+
+        var trainItems = new GameObject[] {
+            trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5/Viewport/Content/Button_21").gameObject,
+            trainPanel.transform.Find("Scroll View/Viewport/Content/ScrollView_5/Viewport/Content/Button_22").gameObject,
+        };
 
         var rankItems = new GameObject[] {
             rankPanel.transform.Find("Scroll View/Viewport/Content/Panel_19").gameObject,
@@ -428,8 +434,12 @@ public class HomePanel : MonoBehaviour {
             }
 
             var isChinese = value == 0;
-            trainPanel5.SetActive(isChinese);
+            // trainPanel5.SetActive(isChinese);
+            foreach (var item in trainItems) {
+				item.SetActive(isChinese);
+            }
             trainImg2.sprite = Resources.Load<Sprite>("Sprites/train_no_2" + (isChinese ? "" : "_en"));
+            trainImg17.sprite = Resources.Load<Sprite>("Sprites/train2_no_3" + (isChinese ? "" : "_en"));
 
             isRankLoad = false;
             langRankIndexs = value == 0 ? new int[] {} : new int[] {16, 17, 20, 21};
