@@ -15,6 +15,7 @@ public class Utils : Singleton<Utils> {
 
 
     void Awake() {
+        // PlayerPrefs.DeleteAll();
         cacheManager = CacheManager.Instance;
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep;

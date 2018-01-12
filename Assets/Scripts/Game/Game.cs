@@ -320,7 +320,9 @@ public class Game : MonoBehaviour {
 			// 過12點須重新計關
 			var today = DateTime.Now.ToString("dd/MM/yyyy");
 			if (PlayerPrefs.GetString(Define.PP_ChallengeLastDate) != today) {
-				int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).ToArray();
+				var isChinese = PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese";
+				var langRemoveIndexs = isChinese ? new int[] {} : new int[] {20, 21};
+				int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).Where(v => !langRemoveIndexs.Contains(v)).ToArray();
 				indexs = numbers.OrderBy(n => Guid.NewGuid()).ToArray().Take(2).ToArray();
 			} else {
 				indexs = PlayerPrefs.GetString(Define.PP_ChallengeIndexs).Split('-').Select(Int32.Parse).Skip(1).ToArray();
@@ -333,7 +335,7 @@ public class Game : MonoBehaviour {
 
 			PlayerPrefs.SetString(Define.PP_ChallengeIndexs, indexsStr);
 			PlayerPrefs.SetString(Define.PP_ChallengeLastDate, today);
-			if (indexsStr == "") {
+			if (indexsStr == "") { // 解鎖
 				PlayerPrefs.SetString(Define.PP_ChallengeDate, DateTime.Now.ToString("dd/MM/yyyy"));
 			}
 		}

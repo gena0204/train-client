@@ -1,0 +1,16 @@
+# VisualStudio/VisualStudioCode/Monodevelop project files
+/.vscode
+*.userprefs
+*.csproj
+*.sln
+*.suo
+
+# Unity
+/etc
+/Library
+/obj
+/Temp
+/UnityPackageManager
+
+# Mac DS_Store Files
+.DS_Store

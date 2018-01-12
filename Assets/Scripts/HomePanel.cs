@@ -95,18 +95,18 @@ public class HomePanel : MonoBehaviour {
         trainBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
-#if !UNITY_EDITOR
+// #if !UNITY_EDITOR
             if (systemManager.GetInt("challeng_limit_enable") == 1 && challengeDate != DateTime.Now.ToString("dd/MM/yyyy")) {
                 MessagePanel.ShowMessage(lang.getString("train_limit"));
                 return;
             }
-#endif
+// #endif
 
             SetPanel(trainPanel, trainBtn);
         });
 
         var isRankLoad = false;
-        var langRankIndexs = new int[] {};
+        var langRemoveIndexs = new int[] {};
         var rankBtn = transform.Find("Panel/Panel_Bottom/Button_Rank").GetComponent<Button>();
         rankBtn.onClick.AddListener(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
@@ -131,7 +131,7 @@ public class HomePanel : MonoBehaviour {
 
                 if (!json.HasField("ranks") || !json["ranks"].IsArray) {
                     for (int i = 0; i < ranks.Count(); i++) {
-                        if (langRankIndexs.Contains(i)) {
+                        if (langRemoveIndexs.Contains(i)) {
                             continue;
                         }
                         ranks.Add(new RankInfo(lang.getString("game_name_" + (i + 1)), int.MaxValue));
@@ -139,7 +139,7 @@ public class HomePanel : MonoBehaviour {
                 } else {
                     int i = 0;
                     foreach (var rank in json["ranks"].list) {
-                        if (langRankIndexs.Contains(i)) {
+                        if (langRemoveIndexs.Contains(i)) {
                             i++; continue;
                         }
                         int value = (int)rank.n;
@@ -234,11 +234,10 @@ public class HomePanel : MonoBehaviour {
             int[] indexs;
 
             var indexsStr = PlayerPrefs.GetString(Define.PP_ChallengeIndexs);
-            var date = PlayerPrefs.GetString(Define.PP_ChallengeDate);
             if (indexsStr != "" && indexsStr.Count(f => f == '-') != 2) {
                 indexs = indexsStr.Split('-').Select(int.Parse).ToArray();
             } else {
-                int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).ToArray();
+                int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).Where(v => !langRemoveIndexs.Contains(v)).ToArray();
                 indexs = numbers.OrderBy(n => Guid.NewGuid()).ToArray().Take(3).ToArray();
             }
 
@@ -442,7 +441,7 @@ public class HomePanel : MonoBehaviour {
             trainImg17.sprite = Resources.Load<Sprite>("Sprites/train2_no_3" + (isChinese ? "" : "_en"));
 
             isRankLoad = false;
-            langRankIndexs = value == 0 ? new int[] {} : new int[] {16, 17, 20, 21};
+            langRemoveIndexs = isChinese ? new int[] {} : new int[] {20, 21};
             foreach (var item in rankItems) {
 				item.SetActive(isChinese);
             }
@@ -468,6 +467,21 @@ public class HomePanel : MonoBehaviour {
 
             for (int i = 0; i < 4; i++) {
                 urls[i] = systemManager.GetValue("link_" + (language == "Chinese" ? "tw_" : "en_") + (i+1));
+            }
+
+            // 重整挑戰模式關卡
+            var indexsStr = PlayerPrefs.GetString(Define.PP_ChallengeIndexs);
+            if (indexsStr != "") {
+                int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).Where(v => !langRemoveIndexs.Contains(v)).ToArray();
+                int[] indexs = numbers.OrderBy(n => Guid.NewGuid()).ToArray().Take(3).ToArray();
+                indexsStr = "";
+            
+                foreach (var index in indexs) {
+                    if (indexsStr != "") indexsStr += "-";
+                    indexsStr += index;
+                }
+                
+                PlayerPrefs.SetString(Define.PP_ChallengeIndexs, indexsStr);
             }
 
             Restful.Instance.AcceptLanguage = language == "Chinese" ? "zh-TW" : "en";
