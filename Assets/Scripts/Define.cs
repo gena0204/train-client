@@ -12,7 +12,7 @@ public class Define {
 #else
     public const bool DEBUG                 = false;
     private const string HOST               = "140.109.150.188";
-    private const string HOST_IPV6          = "[2001:b011:4800:b39:7c09:d2ac:2436:87cc]";
+    private const string HOST_IPV6          = "[2001:b011:4800:b39:7c09:d2ac:2436:87cc]"; // 工作室轉跳
 #endif
 
     public const string RESTFUL_URL_IPV4    = "http://" + HOST + ":8090/";  

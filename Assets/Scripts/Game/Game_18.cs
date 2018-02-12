@@ -69,7 +69,7 @@ public class Game_18 : GameBase {
 			questionText.fontSize = 65;
 			questionTemplates = new string[] {"{0}{1} is {2}{5} than {3}{4}", "{0}{1} is {2}{5} {3}{4}"};
 			sizeDescs = new string[] {"larger", "smaller"};
-			dirDescs = new string[] {"above", "below", "to the left of", "to the right of"};
+			dirDescs = new string[] {"above", "below", "on the left side of", "on the right side of"};
 		}
 
 		var gameData = SystemManager.Instance.GetGameData(UserInfo.Instance.Room.CurrentGameIndex);

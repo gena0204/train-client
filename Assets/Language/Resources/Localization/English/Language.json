@@ -23,7 +23,7 @@
     "UIRegister.TextEducation": "Education",
     "UIRegister.BtnFinish": "Done",
 
-    "UIHome.TextTitle": "每日腦點心",
+    "UIHome.TextTitle": "Cookies for the brainy day",
     "UIHome.BtnPlay": "GO!",
     "UIHome.TextExit": "Exit the game?",
 
@@ -66,5 +66,5 @@
     "UIGameResult.TextWrong": "Wrong",
     "UIGameResult.BtnNext": "Next",
     "UIGameResult.BtnTrain": "Playground",
-    "UIGameResult.BtnAgain": "Play again",
+    "UIGameResult.BtnAgain": "Play again"
 }

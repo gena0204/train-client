@@ -97,7 +97,10 @@ public class HomePanel : MonoBehaviour {
 
 // #if !UNITY_EDITOR
             if (systemManager.GetInt("challeng_limit_enable") == 1 && challengeDate != DateTime.Now.ToString("dd/MM/yyyy")) {
-                MessagePanel.ShowMessage(lang.getString("train_limit"));
+                MessagePanel.SetOkCancelText(LanguageService.Instance.GetStringByKey("UIHome.BtnPlay", "GO!"));
+                MessagePanel.ShowMessage(lang.getString("train_limit"), delegate() {
+                    homePanel.transform.Find("Button_Play").GetComponent<Button>().onClick.Invoke();
+                });
                 return;
             }
 // #endif
@@ -349,11 +352,15 @@ public class HomePanel : MonoBehaviour {
                 }
 
                 foreach (var news in json["news"].list) {
+                    var text = news["content"].str;
+                    text = text.Replace("\\r\\n", "\n"); 
+                    text = text.Replace("\\n", "\n");
+
                     var go = Instantiate<GameObject>(newRow);
                     go.transform.SetParent(newContentPanel);
                     go.transform.localScale = Vector3.one;
                     go.transform.Find("Text_Date").GetComponent<Text>().text = news["create_time"].str;
-                    go.transform.Find("Text_Content").GetComponent<Text>().text = news["content"].str;
+                    go.transform.Find("Text_Content").GetComponent<Text>().text = text;
                 }
             });
         });
@@ -428,7 +435,7 @@ public class HomePanel : MonoBehaviour {
             var font = fonts[value];
             var fontSize = fontSizes[value];
             foreach (var text in groupTexts) {
-				text.font = fonts[value];
+				text.font = font;
                 text.fontSize = fontSize;
             }
 
@@ -578,12 +585,12 @@ public class HomePanel : MonoBehaviour {
         }*/
 
         // 判斷網絡環境 IPV4/IPV6
-        IPAddress[] address = Dns.GetHostAddresses("www.google.com");
-        if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
-            Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
-            Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
-            Define.FILE_URL         = Define.FILE_URL_IPV6;
-        }
+        // IPAddress[] address = Dns.GetHostAddresses("www.google.com");
+        // if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
+        //     Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
+        //     Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
+        //     Define.FILE_URL         = Define.FILE_URL_IPV6;
+        // }
 
         //------------------------------------------
         // Update

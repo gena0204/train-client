@@ -106,6 +106,7 @@ namespace Language
 			if (!group.ContainsKey(key))
 			{
 				Debug.LogWarning("Localization Key Not Found : " + key);
+				Debug.LogWarning("fallback : " + fallback);
 				return fallback;
 			}
 			return group[key];

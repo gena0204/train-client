@@ -122,42 +122,6 @@ public class Game : MonoBehaviour {
 
 		resultTexts[3].text = SystemManager.Instance.GetSlogan();
 
-		if (userInfo.Room.IsChallenge) {
-			if (userInfo.Room.StageIndex >= (userInfo.Room.GameIndexs.Count-1)) {
-				Button btn = resultPanel.transform.Find("Button_Train_2").GetComponent<Button>();
-				btn.onClick.AddListener(delegate() {
-					audioManager.PlaySound((int)Define.Sound.Click);
-					HomePanel.panelIndex = 1; // 回訓練頁面
-					Game.self.Exit();
-				});
-				resultButtonList.Add(btn);
-			} else {
-				Button btn = resultPanel.transform.Find("Button_Next").GetComponent<Button>();
-				btn.onClick.AddListener(delegate() {
-					audioManager.PlaySound((int)Define.Sound.Click);
-					userInfo.Room.StageIndex = userInfo.Room.StageIndex + 1;
-					utils.FadeScene(Define.SCENE_GAME_INTRO, fading);
-				});
-				resultButtonList.Add(btn);
-			}
-		} else {
-			Button btn = resultPanel.transform.Find("Button_Again").GetComponent<Button>();
-			btn.onClick.AddListener(delegate() {
-				audioManager.PlaySound((int)Define.Sound.Click);
-				// utils.FadeScene(Define.SCENE_GAME, fading);
-				utils.FadeScene(Define.SCENE_GAME_INTRO, fading);
-			});
-			resultButtonList.Add(btn);
-
-			btn = resultPanel.transform.Find("Button_Train").GetComponent<Button>();
-			btn.onClick.AddListener(delegate() {
-				audioManager.PlaySound((int)Define.Sound.Click);
-				HomePanel.panelIndex = 1; // 回訓練頁面
-				Game.self.Exit();
-			});
-			resultButtonList.Add(btn);
-		}
-
 		SceneManager.LoadScene("Game_" + (currentGameIndex + 1), LoadSceneMode.Additive);
 		StartCountDown();
 	}
@@ -319,11 +283,19 @@ public class Game : MonoBehaviour {
 
 			// 過12點須重新計關
 			var today = DateTime.Now.ToString("dd/MM/yyyy");
-			if (PlayerPrefs.GetString(Define.PP_ChallengeLastDate) != today) {
+			if (PlayerPrefs.GetString(Define.PP_ChallengeLastDate, today) != today) {
 				var isChinese = PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese";
 				var langRemoveIndexs = isChinese ? new int[] {} : new int[] {20, 21};
 				int[] numbers = Enumerable.Range(0, Define.gameInfo.Count()).Where(v => !langRemoveIndexs.Contains(v)).ToArray();
 				indexs = numbers.OrderBy(n => Guid.NewGuid()).ToArray().Take(2).ToArray();
+
+				var firstIndex = userInfo.Room.GameIndexs[0];
+				userInfo.Room.StageIndex = 0;
+				userInfo.Room.GameIndexs.Clear();
+				userInfo.Room.GameIndexs.Add(firstIndex);
+				foreach (var index in indexs) {
+					userInfo.Room.GameIndexs.Add(index);
+				}
 			} else {
 				indexs = PlayerPrefs.GetString(Define.PP_ChallengeIndexs).Split('-').Select(Int32.Parse).Skip(1).ToArray();
 			}
@@ -338,6 +310,40 @@ public class Game : MonoBehaviour {
 			if (indexsStr == "") { // 解鎖
 				PlayerPrefs.SetString(Define.PP_ChallengeDate, DateTime.Now.ToString("dd/MM/yyyy"));
 			}
+
+			if ((userInfo.Room.StageIndex+1) >= userInfo.Room.GameIndexs.Count) {
+				Button btn = resultPanel.transform.Find("Button_Train_2").GetComponent<Button>();
+				btn.onClick.AddListener(delegate() {
+					audioManager.PlaySound((int)Define.Sound.Click);
+					HomePanel.panelIndex = 1; // 回訓練頁面
+					Game.self.Exit();
+				});
+				resultButtonList.Add(btn);
+			} else {
+				Button btn = resultPanel.transform.Find("Button_Next").GetComponent<Button>();
+				btn.onClick.AddListener(delegate() {
+					audioManager.PlaySound((int)Define.Sound.Click);
+					userInfo.Room.StageIndex = userInfo.Room.StageIndex + 1;
+					Utils.Instance.FadeScene(Define.SCENE_GAME_INTRO, fading);
+				});
+				resultButtonList.Add(btn);
+			}
+		} else {
+			Button btn = resultPanel.transform.Find("Button_Again").GetComponent<Button>();
+			btn.onClick.AddListener(delegate() {
+				audioManager.PlaySound((int)Define.Sound.Click);
+				// utils.FadeScene(Define.SCENE_GAME, fading);
+				Utils.Instance.FadeScene(Define.SCENE_GAME_INTRO, fading);
+			});
+			resultButtonList.Add(btn);
+
+			btn = resultPanel.transform.Find("Button_Train").GetComponent<Button>();
+			btn.onClick.AddListener(delegate() {
+				audioManager.PlaySound((int)Define.Sound.Click);
+				HomePanel.panelIndex = 1; // 回訓練頁面
+				Game.self.Exit();
+			});
+			resultButtonList.Add(btn);
 		}
 
 		currentGame.enabled = false;

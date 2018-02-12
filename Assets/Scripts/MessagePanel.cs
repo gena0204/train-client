@@ -15,6 +15,10 @@ public class MessagePanel : MonoBehaviour {
     private static MessageHandler okHandler = null;
 	private static bool isClose = false;
 
+    private static string okText = "";
+    private static string cancelText = "";
+    
+
     public static void ShowMessage(string text, MessageHandler handler = null) {
         message = text;
         okHandler = handler;
@@ -27,6 +31,10 @@ public class MessagePanel : MonoBehaviour {
         okHandler = handler;
         isOkCancel = true;
         SceneManager.LoadScene(Define.SCENE_MESSAGE, LoadSceneMode.Additive);
+    }
+
+    public static void SetOkCancelText(string ok, string cancel = "") {
+        okText = ok; cancelText = cancel;
     }
 
     public static void Close() {
@@ -67,6 +75,15 @@ public class MessagePanel : MonoBehaviour {
             var cancelBtn = msgImg.Find("Button_Cancel").gameObject;
             cancelBtn.GetComponent<Button>().onClick.AddListener(cancelAction);
             cancelBtn.SetActive(true);
+
+            if (okText != "") {
+                okBtn.transform.Find("Text").GetComponent<Text>().text = okText;
+                okText = "";
+            }
+            if (cancelText != "") {
+                cancelBtn.transform.Find("Text").GetComponent<Text>().text = cancelText;
+                cancelText = "";
+            }
         } else {
             cancelAction = utils.CreateBackAction(delegate() {
                 Utils.Instance.PushBackAction(cancelAction);
@@ -75,6 +92,12 @@ public class MessagePanel : MonoBehaviour {
             var enterBtn = msgImg.Find("Button_Enter").gameObject;
             enterBtn.GetComponent<Button>().onClick.AddListener(okAction);
             enterBtn.SetActive(true);
+
+            if (okText != "") {
+                enterBtn.transform.Find("Text").GetComponent<Language.LanguageText>().enabled = false;
+                enterBtn.transform.Find("Text").GetComponent<Text>().text = okText;
+                okText = "";
+            }
         }
 
         Utils.Instance.PushBackAction(cancelAction);

@@ -31,7 +31,7 @@
     "UITrain.TextGroup1": "注意力",
     "UITrain.TextGroup2": "記憶",
     "UITrain.TextGroup3": "數學",
-    "UITrain.TextGroup4": "執行功能",
+    "UITrain.TextGroup4": "認知",
     "UITrain.TextGroup5": "語言",
 
     "UIRank.TextTitle": "我的成績",
@@ -66,5 +66,5 @@
     "UIGameResult.TextWrong": "答錯題數",
     "UIGameResult.BtnNext": "下個遊戲",
     "UIGameResult.BtnTrain": "遊戲訓練",
-    "UIGameResult.BtnAgain": "再玩一次",
+    "UIGameResult.BtnAgain": "再玩一次"
 }
