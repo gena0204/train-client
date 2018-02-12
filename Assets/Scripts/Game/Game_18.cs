@@ -155,7 +155,9 @@ public class Game_18 : GameBase {
 				break;
 
 			case 1:
-				nextLine = "\n";
+				if (PlayerPrefs.GetString(Define.PP_Language, "Chinese") == "Chinese") {
+					nextLine = "\n";
+				}
 				// 顏色  (紅r, 黃y, 藍b, 綠g)
 				colorTexts = new string[] {
 					Lang.Instance.getString("game_18_color_1"),
