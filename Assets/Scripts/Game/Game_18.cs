@@ -68,7 +68,7 @@ public class Game_18 : GameBase {
 		} else {
 			questionText.fontSize = 65;
 			questionTemplates = new string[] {"{0}{1} is {2}{5} than {3}{4}", "{0}{1} is {2}{5} {3}{4}"};
-			sizeDescs = new string[] {"larger", "smaller"};
+			sizeDescs = new string[] {"\nlarger", "\nsmaller"};
 			dirDescs = new string[] {"\nabove", "\nbelow", "on\nthe left side of", "on\nthe right side of"};
 		}
 
