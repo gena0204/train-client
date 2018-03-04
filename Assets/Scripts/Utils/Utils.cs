@@ -162,7 +162,11 @@ public class Utils : Singleton<Utils> {
     }
 
     private IEnumerator EnterScene(string scene, Fading fading) {
-        GameObject.Find("EventSystem").SetActive(false);
+        var eventSystem = GameObject.Find("EventSystem");
+        if (eventSystem != null) {
+            eventSystem.SetActive(false);
+        }
+        
         if (fading) {
             float fadeTime = fading.BeginFade(1);
             yield return new WaitForSeconds(fadeTime);

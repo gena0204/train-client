@@ -586,7 +586,7 @@ public class HomePanel : MonoBehaviour {
 
         // 判斷網絡環境 IPV4/IPV6 (主機不支援IPV6，須利用工作室轉跳，iOS送審用)
 #if UNITY_IOS
-        IPAddress[] address = Dns.GetHostAddresses("www.google.com");
+        IPAddress[] address = Dns.GetHostAddresses("www.apple.com");
         if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
             Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
             Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
