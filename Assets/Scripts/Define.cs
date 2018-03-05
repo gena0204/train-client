@@ -12,7 +12,7 @@ public class Define {
 #else
     public const bool DEBUG                 = false;
     private const string HOST               = "140.109.150.188";
-    private const string HOST_IPV6          = "[2001:b011:4800:e6:ec7b:5da2:ae5c:d1fe]"; // 工作室轉跳
+    private const string HOST_IPV6          = "gleam-max.ddns.net"; // 工作室轉跳
 #endif
 
     public const string RESTFUL_URL_IPV4    = "http://" + HOST + ":8090/";  
