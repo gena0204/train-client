@@ -56,7 +56,6 @@ public class HomePanel : MonoBehaviour {
     void Start() {
         // PlayerPrefs.DeleteAll();
 
-        Loom.Instance.enabled = true; // 無意義, 消除unity警告用
         UserInfo userInfo = UserInfo.Instance;
         Utils utils = Utils.Instance;
         Lang lang = Lang.Instance;
@@ -64,6 +63,9 @@ public class HomePanel : MonoBehaviour {
         AudioManager audioManager = AudioManager.Instance;
 
         AudioManager.Instance.PlayMusic((int)Define.Music.Main);
+        // Loom.Instance.enabled = true; // 無意義, 消除unity警告用
+        Restful.Instance.Timeout = 20;
+        // Restful.Instance.RetryLimit = 3;
         
 
         //=============================================================
@@ -606,8 +608,18 @@ public class HomePanel : MonoBehaviour {
         updateJson.AddField("version", "");
         updateJson.AddField("data_versions", dataVersions);
 
-        Restful.Instance.Request(Define.API_Update, updateJson, (json) => {
+        RestfulHandler updateHandler = null;
+        updateHandler = (json) => {
             if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
+                if ((int)json["errcode"].n == 10 && Define.RESTFUL_URL == Define.RESTFUL_URL_IPV4) {
+                    Debug.Log("IPV6");
+                    Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
+                    Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
+                    Define.FILE_URL         = Define.FILE_URL_IPV6;
+                    Restful.Instance.Request(Define.API_Update, updateJson, updateHandler);
+                    return;
+                }
+
                 LoadingPanel.Close();
                 MessagePanel.ShowMessage(json["msg"].str, delegate() {
                     Application.Quit();
@@ -769,7 +781,8 @@ public class HomePanel : MonoBehaviour {
             };
             actionQ.Enqueue(action);
             ((UnityAction)actionQ.Dequeue())();
-        });
+        };
+        Restful.Instance.Request(Define.API_Update, updateJson, updateHandler);
     }
 
     // Update is called once per frame

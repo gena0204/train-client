@@ -61,7 +61,7 @@ public class LoadingPanel : MonoBehaviour {
             isClose = false;
             // loadCount = count;
             // RefreshFinishCountText();
-            SceneManager.LoadScene(Define.SCENE_LOADING, LoadSceneMode.Additive);
+            SceneManager.LoadSceneAsync(Define.SCENE_LOADING, LoadSceneMode.Additive);
         }
     }
 

@@ -48,7 +48,8 @@ public class Utils : Singleton<Utils> {
     // Use this for initialization
     void Start() {
         Application.logMessageReceived += HandleLog;
-        if (Define.DEBUG) {
+        var debug = Define.DEBUG;
+        if (debug) {
             FPS.Instance.Init();
         }
     }
@@ -335,6 +336,8 @@ public class Utils : Singleton<Utils> {
                     100);
 
                 cacheManager.SetObject(key, sprite);
+
+                www.Dispose();
             }
         }
 
@@ -379,10 +382,11 @@ public class Utils : Singleton<Utils> {
                 // 儲存檔案
                 if (www.error == null) {
                     SaveTextureToFile(www.texture, url);
-                }
-                else {
+                } else {
                     Debug.Log(www.error);
                 }
+
+                www.Dispose();
             }
         }
 

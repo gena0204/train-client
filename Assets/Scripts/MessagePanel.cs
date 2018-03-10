@@ -23,14 +23,14 @@ public class MessagePanel : MonoBehaviour {
         message = text;
         okHandler = handler;
         isOkCancel = false;
-        SceneManager.LoadScene(Define.SCENE_MESSAGE, LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync(Define.SCENE_MESSAGE, LoadSceneMode.Additive);
     }
 
     public static void ShowOkCancel(string text, MessageHandler handler = null) {
         message = text;
         okHandler = handler;
         isOkCancel = true;
-        SceneManager.LoadScene(Define.SCENE_MESSAGE, LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync(Define.SCENE_MESSAGE, LoadSceneMode.Additive);
     }
 
     public static void SetOkCancelText(string ok, string cancel = "") {

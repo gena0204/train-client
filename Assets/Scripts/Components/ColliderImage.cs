@@ -7,7 +7,7 @@ public class ColliderImage : Image {
 
     // private static Plane xy = new Plane(Vector3.forward, new Vector3(0, 0, 90.0f));
 	
-    void Awake() {
+    protected override void Awake() {
         _collider = GetComponent<Collider2D>();
     }
  
