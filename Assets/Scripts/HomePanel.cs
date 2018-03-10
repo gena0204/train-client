@@ -588,11 +588,14 @@ public class HomePanel : MonoBehaviour {
 
         // 判斷網絡環境 IPV4/IPV6 (主機不支援IPV6，須利用工作室轉跳，iOS送審用)
 #if UNITY_IOS
-        IPAddress[] address = Dns.GetHostAddresses("www.apple.com");
-        if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
-            Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
-            Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
-            Define.FILE_URL         = Define.FILE_URL_IPV6;
+        try {
+            IPAddress[] address = Dns.GetHostAddresses("www.apple.com");
+            if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
+                Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
+                Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
+                Define.FILE_URL         = Define.FILE_URL_IPV6;
+            }
+        } catch {
         }
 #endif
 
@@ -612,7 +615,6 @@ public class HomePanel : MonoBehaviour {
         updateHandler = (json) => {
             if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
                 if ((int)json["errcode"].n == 10 && Define.RESTFUL_URL == Define.RESTFUL_URL_IPV4) {
-                    Debug.Log("IPV6");
                     Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
                     Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
                     Define.FILE_URL         = Define.FILE_URL_IPV6;
