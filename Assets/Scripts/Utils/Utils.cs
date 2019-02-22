@@ -22,6 +22,7 @@ public class Utils : Singleton<Utils> {
         QualitySettings.masterTextureLimit = 0;
         Application.targetFrameRate = 60;
         // Application.runInBackground = true;
+        // Input.multiTouchEnabled = false; // 關閉多點觸控
 
         // if (PlayerPrefs.GetString("client_version") != Define.VERSION_CLIENT) {
         //     PlayerPrefs.DeleteAll();
@@ -52,6 +53,13 @@ public class Utils : Singleton<Utils> {
         if (debug) {
             FPS.Instance.Init();
         }
+
+#if UNITY_IOS && !UNITY_EDITOR
+        UnityEngine.iOS.NotificationServices.RegisterForNotifications(
+            UnityEngine.iOS.NotificationType.Alert |
+            UnityEngine.iOS.NotificationType.Badge |
+            UnityEngine.iOS.NotificationType.Sound);
+#endif
     }
 
     // Update is called once per frame
@@ -109,12 +117,13 @@ public class Utils : Singleton<Utils> {
         }
         
         long delayMs = day * 24 * 3600 * 1000;
+        delayMs = 10 * 1000;
         var msg = string.Format(Lang.Instance.getString("notification"), day);
 
         //LocalNotification.CancelNotification(1);
         LocalNotification.ClearNotifications();
         LocalNotification.SendRepeatingNotification(1, delayMs, delayMs, Application.productName,
-            msg, new Color32(0xff, 0x44, 0x44, 255));
+            msg, new Color32(0xff, 0x44, 0x44, 255), true, false);
     }
 
     public UnityAction CreateBackAction(UnityAction action) {

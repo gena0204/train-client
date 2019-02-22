@@ -37,6 +37,7 @@ public class HomePanel : MonoBehaviour {
     public static int panelIndex = 0;
     public static UnityAction enterCB;
     private static bool isInit = false;
+    private static bool isFirstNewsLoad = false;
 
     private Button currentBtn = null;
     private GameObject currentPanel = null;
@@ -99,10 +100,9 @@ public class HomePanel : MonoBehaviour {
 
 // #if !UNITY_EDITOR
             if (systemManager.GetInt("challeng_limit_enable") == 1 && challengeDate != DateTime.Now.ToString("dd/MM/yyyy")) {
-                MessagePanel.SetOkCancelText(LanguageService.Instance.GetStringByKey("UIHome.BtnPlay", "GO!"));
                 MessagePanel.ShowMessage(lang.getString("train_limit"), delegate() {
                     homePanel.transform.Find("Button_Play").GetComponent<Button>().onClick.Invoke();
-                });
+                }, LanguageService.Instance.GetStringByKey("UIHome.BtnPlay", "GO!"));
                 return;
             }
 // #endif
@@ -191,7 +191,7 @@ public class HomePanel : MonoBehaviour {
         GameObject exitImg = transform.Find("Panel/Image_Exit").gameObject;
         GameObject maskPanel = transform.Find("Panel/Panel_Mask").gameObject;
 
-        MessagePanel.MessageHandler logoutHandler = delegate() {
+        UnityAction logoutHandler = delegate() {
             SetPanel(homePanel, homeBtn, false);
 
             maskPanel.SetActive(false);
@@ -512,6 +512,32 @@ public class HomePanel : MonoBehaviour {
 
         UnityAction initCB = delegate() {
             accountText.text = "ID: " + userInfo.Account;
+
+            // 讀取重大消息
+            if (!isFirstNewsLoad) {
+                LoadingPanel.Show();
+                JSONObject jsonData = new JSONObject(JSONObject.Type.OBJECT);
+                jsonData.AddField("token", userInfo.Token);
+                jsonData.AddField("type", 1);
+                Restful.Instance.Request(Define.API_News, jsonData, (json) => {
+                    LoadingPanel.Close();
+                    isFirstNewsLoad = true;
+
+                    if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
+                        MessagePanel.ShowMessage(json["msg"].str);
+                        return;
+                    }
+
+                    if (json["news"].IsArray) {
+                        foreach (var news in json["news"].list) {
+                            var text = news["content"].str;
+                            text = text.Replace("\\r\\n", "\n"); 
+                            text = text.Replace("\\n", "\n");
+                            MessagePanel.ShowMessage(text);
+                        }
+                    }
+                });
+            }
         };
 
         enterCB = delegate() {
@@ -707,7 +733,7 @@ public class HomePanel : MonoBehaviour {
                             var url = Define.FILE_URL + image;
                             action = delegate() {
                                 utils.DownloadAndSaveImage(url, delegate() {
-                                    LoadingPanel.Next();
+                                    // LoadingPanel.Next();
                                     PlayerPrefs.SetString(image, url);
                                     ((UnityAction)actionQ.Dequeue())();
                                 });

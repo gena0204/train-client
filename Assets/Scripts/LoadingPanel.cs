@@ -1,21 +1,34 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LoadingPanel : MonoBehaviour {
 
+    private enum State {
+        Close = 0,
+        Opening,
+        Open,
+        Closing,
+    }
+
+    private static object _lock = new object();
+
     private static LoadingPanel loadingPanel = null;
 
+    private Text detailText = null;
     // private Text content = null;
     // private Transform bar = null;
 
+    private static string detailString = "";
     // private static string contentString = "";
     // private static string countString = "";
     // private static float finishCount = 0;
     // private static float loadCount = 0;
-    private static bool isShow = false;
-    private static bool isClose = true;
+
+    private static State state = State.Close;
     // private static bool isUpdate = false;
     // private static Vector2 oriSize;
     // private static Vector2 targetSize;
@@ -23,18 +36,35 @@ public class LoadingPanel : MonoBehaviour {
     // private const float moveSpeed = 120.0f;
 
 
+    private static List<EventSystem> eventSystemList = new List<EventSystem>();
+
+
+
+    void OnDestroy() {
+        loadingPanel = null;
+        // state = State.Close; // 統一由Close()設定
+    }
+
 	// Use this for initialization
 	void Start () {
-        loadingPanel = this;
+        lock (_lock) {
+            loadingPanel = this;
 
-        // content = transform.FindChild("Panel_Loading/Image_Icon/Text_Content").GetComponent<Text>();
-        // bar = transform.FindChild("Panel_Loading/Image_Icon/Image_Bar");
+            // detailText = transform.Find("Text_Detail").GetComponent<Text>();
+            // content = transform.Find("Panel_Loading/Image_Icon/Text_Content").GetComponent<Text>();
+            // bar = transform.Find("Panel_Loading/Image_Icon/Image_Bar");
 
-        // targetSize = oriSize = bar.GetComponent<RectTransform>().sizeDelta;
-        // targetSize.x = 0;
-        // bar.GetComponent<RectTransform>().sizeDelta = targetSize;
+            // targetSize = oriSize = bar.GetComponent<RectTransform>().sizeDelta;
+            // targetSize.x = 0;
+            // bar.GetComponent<RectTransform>().sizeDelta = targetSize;
 
-        // content.text = contentString;
+            // detailText.text = detailString;
+            // content.text = contentString;
+
+            if (state != State.Closing) {
+                state = State.Open;
+            }
+        }
 	}
 	
 	// Update is called once per frame
@@ -50,40 +80,68 @@ public class LoadingPanel : MonoBehaviour {
         //     }
         // }
 
-		if (!isShow) {
-			Close();
-		}
+        lock (_lock) {
+            if (state == State.Closing) {
+                Close();
+            }
+        }
 	}
 
-    public static void Show(int count = 0) {
-        if (!loadingPanel) {
-            isShow = true;
-            isClose = false;
-            // loadCount = count;
-            // RefreshFinishCountText();
-            SceneManager.LoadSceneAsync(Define.SCENE_LOADING, LoadSceneMode.Additive);
+    // public static void Show(/* int count = 0 */) {
+    //     lock (_lock) {
+    //         EnableEventSystem(false);
+
+    //         if (!loadingPanel && state == State.Close) {
+    //             state = State.Opening;
+    //             // loadCount = count;
+    //             // RefreshFinishCountText();
+    //             SceneManager.LoadSceneAsync(Define.SCENE_LOADING, LoadSceneMode.Additive);
+    //         } else if (!loadingPanel && state == State.Closing) { // 尚未開啟時關閉但又馬上開啟
+    //             state = State.Opening;
+    //         }
+    //     }
+    // }
+
+    public static void Show(string text = "") {
+        lock (_lock) {
+            EnableEventSystem(false);
+
+            if (!loadingPanel && state == State.Close) {
+                state = State.Opening;
+                detailString = text;
+                SceneManager.LoadSceneAsync(Define.SCENE_LOADING, LoadSceneMode.Additive);
+            } else if (!loadingPanel && state == State.Closing) { // 尚未開啟時關閉但又馬上開啟
+                state = State.Opening;
+            } else if (text != "") {
+                Loom.QueueOnMainThread(() => { // 主線程執行
+                    if (loadingPanel) {
+                        loadingPanel.detailText.text = text;
+                    }
+                });
+            }
         }
     }
 
     public static void Close() {
-        if (isClose) {
-            return;
-        }
+        lock (_lock) {
+            EnableEventSystem(true);
 
-        isShow = false;
-        // isUpdate = false;
-        // loadCount = 0;
-        // finishCount = 0;
-        // contentString = "";
+            if (state == State.Opening) {
+                state = State.Closing;
+                return;
+            }
 
-        if (loadingPanel) {
-            isClose = true;
-            loadingPanel = null;
-            SceneManager.UnloadSceneAsync(Define.SCENE_LOADING);
-            // Loom.QueueOnMainThread(() => { // 主線程執行
-            //     Destroy(loadingPanel.gameObject);
-            //     loadingPanel = null;
-            // });
+            // isUpdate = false;
+            // loadCount = 0;
+            // finishCount = 0;
+            // contentString = "";
+            detailString = "";
+        
+            if (loadingPanel) {
+                state = State.Close;
+                loadingPanel = null;
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(Define.SCENE_LOADING));
+            }
         }
     }
 
@@ -91,6 +149,20 @@ public class LoadingPanel : MonoBehaviour {
     //     loadCount = count;
     //     RefreshFinishCountText();
     // }
+
+    public static void SetDetail(string text) {
+        lock (_lock) {
+            if (loadingPanel) {
+                Loom.QueueOnMainThread(() => { // 主線程執行
+                    if (loadingPanel) {
+                        loadingPanel.detailText.text = text;
+                    }
+                });
+            } else {
+                detailString = text;
+            }
+        }
+    }
 
     // public static void SetText(string text) {
     //     if (loadingPanel) {
@@ -101,7 +173,7 @@ public class LoadingPanel : MonoBehaviour {
     // }
 
     public static bool IsShow() {
-        return isShow;
+        return state == State.Open || state == State.Opening;
     }
 
     // public static void Progress(float person) {
@@ -110,7 +182,7 @@ public class LoadingPanel : MonoBehaviour {
     //     isUpdate = true;
     // }
 
-    public static void Next() {
+    // public static void Next() {
     //     if (finishCount >= loadCount) {
     //         return;
     //     }
@@ -118,7 +190,7 @@ public class LoadingPanel : MonoBehaviour {
     //     Progress(finishCount / loadCount * 100);
     //     RefreshFinishCountText();
     //     isUpdate = true;
-    }
+    // }
 
     // private static void RefreshFinishCountText() {
     //     if (loadCount > 0) {
@@ -128,4 +200,22 @@ public class LoadingPanel : MonoBehaviour {
     //         countString = "";
     //     }
     // }
+
+    private static void EnableEventSystem(bool enable) {
+        if (enable) {
+            for (int i = 0; i < eventSystemList.Count; i++) {
+                if (eventSystemList[i]) {
+                    eventSystemList[i].enabled = true;
+                }
+            }
+            eventSystemList.Clear();
+        } else {
+            foreach (var es in Resources.FindObjectsOfTypeAll(typeof(EventSystem)) as EventSystem[]) {
+                if (es.enabled) {
+                    eventSystemList.Add(es);
+                    es.enabled = false;
+                }
+            }
+        }
+    }
 }

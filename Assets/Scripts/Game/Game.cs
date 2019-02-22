@@ -65,6 +65,10 @@ public class Game : MonoBehaviour {
 		}
 	}
 
+	void OnDestroy() {
+		self = null;
+	}
+
 	void Awake() {
 		self = this;
 	}
