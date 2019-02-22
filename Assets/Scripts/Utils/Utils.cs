@@ -89,6 +89,10 @@ public class Utils : Singleton<Utils> {
 
     void HandleLog(string logString, string stackTrace, LogType type) {
 		if (type == LogType.Error || type == LogType.Exception) {
+            if (logString.Contains("get_HasShutdownStarted")) {
+                return; // il2cpp不支持，後面版本會修正，先略過
+            }
+
 			logString = logString.Replace("\n", "\\n");
 			stackTrace = stackTrace.Replace("\n", "\\n");
 
@@ -117,6 +121,7 @@ public class Utils : Singleton<Utils> {
         }
         
         long delayMs = day * 24 * 3600 * 1000;
+        // delayMs = 10 * 1000; // test
         var msg = string.Format(Lang.Instance.getString("notification"), day);
 
         //LocalNotification.CancelNotification(1);
