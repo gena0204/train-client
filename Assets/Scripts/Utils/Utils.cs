@@ -117,7 +117,6 @@ public class Utils : Singleton<Utils> {
         }
         
         long delayMs = day * 24 * 3600 * 1000;
-        delayMs = 10 * 1000;
         var msg = string.Format(Lang.Instance.getString("notification"), day);
 
         //LocalNotification.CancelNotification(1);
