@@ -57,16 +57,17 @@ public class HomePanel : MonoBehaviour {
     void Start() {
         // PlayerPrefs.DeleteAll();
 
-        UserInfo userInfo = UserInfo.Instance;
-        Utils utils = Utils.Instance;
-        Lang lang = Lang.Instance;
-        SystemManager systemManager = SystemManager.Instance;
-        AudioManager audioManager = AudioManager.Instance;
+        var userInfo = UserInfo.Instance;
+        var utils = Utils.Instance;
+        var lang = Lang.Instance;
+        var systemManager = SystemManager.Instance;
+        var audioManager = AudioManager.Instance;
+        var restful = Restful.Instance;
 
-        AudioManager.Instance.PlayMusic((int)Define.Music.Main);
+        audioManager.PlayMusic((int)Define.Music.Main);
         // Loom.Instance.enabled = true; // 無意義, 消除unity警告用
-        Restful.Instance.Timeout = 20;
-        // Restful.Instance.RetryLimit = 3;
+        restful.Timeout = 20;
+        // restful.RetryLimit = 3;
         
 
         //=============================================================
@@ -125,7 +126,7 @@ public class HomePanel : MonoBehaviour {
             JSONObject rankJson = new JSONObject(JSONObject.Type.OBJECT);
             rankJson.AddField("token", userInfo.Token);
             LoadingPanel.Show();
-            Restful.Instance.Request(Define.API_Rank, rankJson, (json) => {
+            restful.Request(Define.API_Rank, rankJson, (json) => {
                 LoadingPanel.Close();
 
                 if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
@@ -199,7 +200,7 @@ public class HomePanel : MonoBehaviour {
             
             JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
             data.AddField("token", userInfo.Token);
-            Restful.Instance.Request(Define.API_Logout, data, (json) => {
+            restful.Request(Define.API_Logout, data, (json) => {
                 userInfo.Clear();
                 LocalNotification.CancelNotification(1);
                 SceneManager.LoadScene(Define.SCENE_LAUNCH, LoadSceneMode.Additive);
@@ -319,12 +320,12 @@ public class HomePanel : MonoBehaviour {
         UnityAction backMenuAction = utils.CreateBackAction(delegate() {
             audioManager.PlaySound((int)Define.Sound.Click);
 
-            Utils.Instance.PlayAnimation(newsPanel.GetComponent<Animation>(), "page_out", delegate() {
+            utils.PlayAnimation(newsPanel.GetComponent<Animation>(), "page_out", delegate() {
                 newsPanel.SetActive(false);
             });
 
             menuPanel.SetActive(true);
-            Utils.Instance.PlayAnimation(menuPanel.GetComponent<Animation>(), "page_fadein");
+            utils.PlayAnimation(menuPanel.GetComponent<Animation>(), "page_fadein");
         });
         newsPanel.transform.Find("Button_Back").GetComponent<Button>().onClick.AddListener(backMenuAction);
 
@@ -332,9 +333,9 @@ public class HomePanel : MonoBehaviour {
             audioManager.PlaySound((int)Define.Sound.Click);
 
             newsPanel.SetActive(true);
-            Utils.Instance.PlayAnimation(newsPanel.GetComponent<Animation>(), "page_in");
+            utils.PlayAnimation(newsPanel.GetComponent<Animation>(), "page_in");
 
-            Utils.Instance.PlayAnimation(menuPanel.GetComponent<Animation>(), "page_fadeout", delegate() {
+            utils.PlayAnimation(menuPanel.GetComponent<Animation>(), "page_fadeout", delegate() {
                 menuPanel.SetActive(false);
             });
 
@@ -346,7 +347,7 @@ public class HomePanel : MonoBehaviour {
             JSONObject newsJson = new JSONObject(JSONObject.Type.OBJECT);
             newsJson.AddField("token", userInfo.Token);
             LoadingPanel.Show();
-            Restful.Instance.Request(Define.API_News, newsJson, (json) => {
+            restful.Request(Define.API_News, newsJson, (json) => {
                 LoadingPanel.Close();
 
                 if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
@@ -493,7 +494,7 @@ public class HomePanel : MonoBehaviour {
                 PlayerPrefs.SetString(Define.PP_ChallengeIndexs, indexsStr);
             }
 
-            Restful.Instance.AcceptLanguage = language == "Chinese" ? "zh-TW" : "en";
+            restful.AcceptLanguage = language == "Chinese" ? "zh-TW" : "en";
         });
         changeTrainLang(langDropdown.value);
 
@@ -519,7 +520,7 @@ public class HomePanel : MonoBehaviour {
                 JSONObject jsonData = new JSONObject(JSONObject.Type.OBJECT);
                 jsonData.AddField("token", userInfo.Token);
                 jsonData.AddField("type", 1);
-                Restful.Instance.Request(Define.API_News, jsonData, (json) => {
+                restful.Request(Define.API_News, jsonData, (json) => {
                     LoadingPanel.Close();
                     isFirstNewsLoad = true;
 
@@ -555,7 +556,7 @@ public class HomePanel : MonoBehaviour {
             jsonData.AddField("os_version", SystemInfo.operatingSystem);
             jsonData.AddField("version", UnityEngine.Application.version);
 
-            Restful.Instance.Request(Define.API_Enter, jsonData, (json) => {
+            restful.Request(Define.API_Enter, jsonData, (json) => {
                 LoadingPanel.Close();
 
                 if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
@@ -612,19 +613,6 @@ public class HomePanel : MonoBehaviour {
         } else if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork) { // 行動網路
         }*/
 
-        // 判斷網絡環境 IPV4/IPV6 (主機不支援IPV6，須利用工作室轉跳，iOS送審用)
-#if UNITY_IOS
-        try {
-            IPAddress[] address = Dns.GetHostAddresses("www.apple.com");
-            if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
-                Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
-                Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
-                Define.FILE_URL         = Define.FILE_URL_IPV6;
-            }
-        } catch {
-        }
-#endif
-
         //------------------------------------------
         // Update
         //------------------------------------------
@@ -640,13 +628,29 @@ public class HomePanel : MonoBehaviour {
         RestfulHandler updateHandler = null;
         updateHandler = (json) => {
             if (json.HasField("errcode") && (int)json["errcode"].n > 0) {
-                if ((int)json["errcode"].n == 10 && Define.RESTFUL_URL == Define.RESTFUL_URL_IPV4) {
-                    Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
-                    Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
-                    Define.FILE_URL         = Define.FILE_URL_IPV6;
-                    Restful.Instance.Request(Define.API_Update, updateJson, updateHandler);
-                    return;
+                // if ((int)json["errcode"].n == 10 && Define.RESTFUL_URL == Define.RESTFUL_URL_IPV4) {
+                //     Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
+                //     Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
+                //     Define.FILE_URL         = Define.FILE_URL_IPV6;
+                //     restful.Request(Define.API_Update, updateJson, updateHandler);
+                //     return;
+                // }
+                #if UNITY_IOS
+                if ((int)json["errcode"].n == (int)HttpStatusCode.NotFound && Define.RESTFUL_URL == Define.RESTFUL_URL_IPV4) {
+                    // 判斷網絡環境 IPV4/IPV6 (主機不支援IPV6，須利用工作室轉跳，iOS送審用)
+                    try {
+                        IPAddress[] address = Dns.GetHostAddresses("www.apple.com");
+                        if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
+                            Define.RESTFUL_URL      = Define.RESTFUL_URL_IPV6;
+                            Define.WEBSOCKET_URL    = Define.WEBSOCKET_URL_IPV6;
+                            Define.FILE_URL         = Define.FILE_URL_IPV6;
+                            restful.Request(Define.API_Update, updateJson, updateHandler);
+                            return;
+                        }
+                    } catch {
+                    }
                 }
+                #endif
 
                 LoadingPanel.Close();
                 MessagePanel.ShowMessage(json["msg"].str, delegate() {
@@ -810,7 +814,7 @@ public class HomePanel : MonoBehaviour {
             actionQ.Enqueue(action);
             ((UnityAction)actionQ.Dequeue())();
         };
-        Restful.Instance.Request(Define.API_Update, updateJson, updateHandler);
+        restful.Request(Define.API_Update, updateJson, updateHandler);
     }
 
     // Update is called once per frame
